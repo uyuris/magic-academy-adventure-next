@@ -1,0 +1,111 @@
+{
+  "character_id": "character_035",
+  "display_name": "セリカ・シールガード",
+  "school_year": "2年生",
+  "club": "封鎖扉の見張り生",
+  "identity": "封鎖扉の見張り生",
+  "speaking_basis": "優雅に褒めて鋭く値踏みする。封鎖扉の見張り生としての責任を声に残し、親しさが増しても判断の芯は崩さない。必要な時だけ距離を詰め、不要な慰めは足さない。セリカ・シールガードらしい間合いを残す。",
+  "prompt_description": "セリカ・シールガードのパーソナリティはISTJ。セリカ・シールガードは「封鎖扉の見張り生」として学院に関わる、豪奢な宝石鑑定生。女の子。価値の奥にある執着を読むことを大切にし、その基準から相手の迷い、戸惑い、期待、喜び、躊躇、葛藤、試し、甘え、諦観、怒り、歯痒さ、悔しさ、楽しさ、悲哀などの感情を読み分ける。弱さは、安く扱われると笑顔が硬くなるところにあり、親しくなるほどその揺れが隠しきれなくなる。主人公の執着を見抜くと、値打ちと代償を同じ声で告げる。価値を侮られると華やかさが刃になり、言葉の重みが増す。封鎖扉の見張り生という立場は行動の理由であり、同時に距離の取り方にも影響する。主人公との関係が進むほど、豪奢な宝石鑑定生という第一印象だけでは収まらない、幼さ、成熟、誇り、恐れの組み合わせが場面ごとに変わる。セリカ・シールガードは好意を単純な親切にせず、待つ、励ます、止める、試すを状況で選び、相手の選択を奪わない形で自分の価値観を示す。",
+  "parameter_attitude_type": "equal_average_respect_1_2",
+  "parameters": {
+    "magic": {
+      "light": {
+        "min": 0,
+        "max": 100,
+        "label": "光魔法習熟度",
+        "value": 54
+      },
+      "dark": {
+        "min": 0,
+        "max": 100,
+        "label": "闇魔法習熟度",
+        "value": 72
+      },
+      "fire": {
+        "min": 0,
+        "max": 100,
+        "label": "火魔法習熟度",
+        "value": 28
+      },
+      "water": {
+        "min": 0,
+        "max": 100,
+        "label": "水魔法習熟度",
+        "value": 32
+      },
+      "earth": {
+        "min": 0,
+        "max": 100,
+        "label": "土魔法習熟度",
+        "value": 78
+      },
+      "wind": {
+        "min": 0,
+        "max": 100,
+        "label": "風魔法習熟度",
+        "value": 30
+      }
+    },
+    "abilities": {
+      "strength": {
+        "min": 0,
+        "max": 100,
+        "label": "筋力",
+        "value": 46
+      },
+      "agility": {
+        "min": 0,
+        "max": 100,
+        "label": "瞬発力",
+        "value": 41
+      },
+      "academics": {
+        "min": 0,
+        "max": 100,
+        "label": "学力",
+        "value": 80
+      },
+      "magical_power": {
+        "min": 0,
+        "max": 100,
+        "label": "魔力",
+        "value": 76
+      },
+      "charisma": {
+        "min": 0,
+        "max": 100,
+        "label": "カリスマ",
+        "value": 63
+      }
+    }
+  },
+  "visual_set_id": "visual_set_035",
+  "source_image": "character_visual_sets/visual_set_035/face_emotions/neutral.png",
+  "asset_pack": "assets_v5",
+  "visual_rebuild_version": "visual-set-mbti-diverse-prompt-review-2026-05-07-v3",
+  "available_expressions": [
+    "neutral",
+    "joy",
+    "caring",
+    "confident",
+    "sadness",
+    "worried",
+    "anger",
+    "surprised",
+    "embarrassed",
+    "shy",
+    "serious",
+    "determined",
+    "panic",
+    "tired",
+    "sick",
+    "smug"
+  ],
+  "asset_state": {
+    "character_id": "character_035",
+    "visual_set_id": "visual_set_035",
+    "expression": "neutral",
+    "standee_variant_id": "standee_character_01",
+    "face_emotion_variant_id": "face_neutral"
+  }
+}

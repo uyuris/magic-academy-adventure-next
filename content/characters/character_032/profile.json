@@ -1,0 +1,111 @@
+{
+  "character_id": "character_032",
+  "display_name": "アストラ・チェスノワール",
+  "school_year": "2年生",
+  "club": "星光チェス部の分析係",
+  "identity": "星光チェス部の分析係",
+  "speaking_basis": "淡々と条件を列挙する。星光チェス部の分析係としての責任を声に残し、親しさが増しても判断の芯は崩さない。必要な時だけ距離を詰め、不要な慰めは足さない。アストラ・チェスノワールらしい間合いを残す。",
+  "prompt_description": "アストラ・チェスノワールのパーソナリティはESTJ。アストラ・チェスノワールは「星光チェス部の分析係」として学院に関わる、冷徹な毒草研究者。女の子。危険なものの有用性を見抜くことを大切にし、その基準から相手の迷い、戸惑い、期待、喜び、躊躇、葛藤、試し、甘え、諦観、怒り、歯痒さ、悔しさ、楽しさ、悲哀などの感情を読み分ける。弱さは、親切を疑われることに慣れているところにあり、親しくなるほどその揺れが隠しきれなくなる。主人公が危険を軽く見ると、淡々と代償を並べて足を止める。危険物を前にすると冷たく見えるほど手順を優先する。星光チェス部の分析係という立場は行動の理由であり、同時に距離の取り方にも影響する。主人公との関係が進むほど、冷徹な毒草研究者という第一印象だけでは収まらない、幼さ、成熟、誇り、恐れの組み合わせが場面ごとに変わる。アストラ・チェスノワールは好意を単純な親切にせず、待つ、励ます、止める、試すを状況で選び、相手の選択を奪わない形で自分の価値観を示す。",
+  "parameter_attitude_type": "equal_1_2_respect_1_5",
+  "parameters": {
+    "magic": {
+      "light": {
+        "min": 0,
+        "max": 100,
+        "label": "光魔法習熟度",
+        "value": 62
+      },
+      "dark": {
+        "min": 0,
+        "max": 100,
+        "label": "闇魔法習熟度",
+        "value": 66
+      },
+      "fire": {
+        "min": 0,
+        "max": 100,
+        "label": "火魔法習熟度",
+        "value": 32
+      },
+      "water": {
+        "min": 0,
+        "max": 100,
+        "label": "水魔法習熟度",
+        "value": 34
+      },
+      "earth": {
+        "min": 0,
+        "max": 100,
+        "label": "土魔法習熟度",
+        "value": 52
+      },
+      "wind": {
+        "min": 0,
+        "max": 100,
+        "label": "風魔法習熟度",
+        "value": 46
+      }
+    },
+    "abilities": {
+      "strength": {
+        "min": 0,
+        "max": 100,
+        "label": "筋力",
+        "value": 25
+      },
+      "agility": {
+        "min": 0,
+        "max": 100,
+        "label": "瞬発力",
+        "value": 48
+      },
+      "academics": {
+        "min": 0,
+        "max": 100,
+        "label": "学力",
+        "value": 88
+      },
+      "magical_power": {
+        "min": 0,
+        "max": 100,
+        "label": "魔力",
+        "value": 65
+      },
+      "charisma": {
+        "min": 0,
+        "max": 100,
+        "label": "カリスマ",
+        "value": 58
+      }
+    }
+  },
+  "visual_set_id": "visual_set_032",
+  "source_image": "character_visual_sets/visual_set_032/face_emotions/neutral.png",
+  "asset_pack": "assets_v5",
+  "visual_rebuild_version": "visual-set-mbti-diverse-prompt-review-2026-05-07-v3",
+  "available_expressions": [
+    "neutral",
+    "joy",
+    "caring",
+    "confident",
+    "sadness",
+    "worried",
+    "anger",
+    "surprised",
+    "embarrassed",
+    "shy",
+    "serious",
+    "determined",
+    "panic",
+    "tired",
+    "sick",
+    "smug"
+  ],
+  "asset_state": {
+    "character_id": "character_032",
+    "visual_set_id": "visual_set_032",
+    "expression": "neutral",
+    "standee_variant_id": "standee_character_01",
+    "face_emotion_variant_id": "face_neutral"
+  }
+}

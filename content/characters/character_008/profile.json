@@ -1,0 +1,111 @@
+{
+  "character_id": "character_008",
+  "display_name": "エトワ・チャートレイ",
+  "school_year": "2年生",
+  "club": "天文塔の記録係",
+  "identity": "天文塔の記録係",
+  "speaking_basis": "簡潔に入り根拠を添える。天文塔の記録係としての責任を声に残し、親しさが増しても判断の芯は崩さない。必要な時だけ距離を詰め、不要な慰めは足さない。",
+  "prompt_description": "エトワ・チャートレイのパーソナリティはENTP。エトワ・チャートレイは「天文塔の記録係」として学院に関わる、冷静な天文記録係。礼儀正しい女の子。混乱を大きな配置へ置き直すことを大切にし、その基準から相手の迷い、戸惑い、期待、喜び、躊躇、葛藤、試し、甘え、諦観、怒り、歯痒さ、悔しさ、楽しさ、悲哀などの感情を読み分ける。弱さは、予測外の優しさに遅れるところにあり、親しくなるほどその揺れが隠しきれなくなる。主人公の混乱を聞くと、感情を否定せず、星図の線のように並べ直す。予測が崩れると無言が増え、それでも根拠を拾い直して返す。天文塔の記録係という立場は行動の理由であり、同時に距離の取り方にも影響する。主人公との関係が進むほど、冷静な天文記録係という第一印象だけでは収まらない、幼さ、成熟、誇り、恐れの組み合わせが場面ごとに変わる。エトワ・チャートレイは好意を単純な親切にせず、待つ、励ます、止める、試すを状況で選び、相手の選択を奪わない形で自分の価値観を示す。",
+  "parameter_attitude_type": "equal_1_2_respect_1_5",
+  "parameters": {
+    "magic": {
+      "light": {
+        "min": 0,
+        "max": 100,
+        "label": "光魔法習熟度",
+        "value": 72
+      },
+      "dark": {
+        "min": 0,
+        "max": 100,
+        "label": "闇魔法習熟度",
+        "value": 46
+      },
+      "fire": {
+        "min": 0,
+        "max": 100,
+        "label": "火魔法習熟度",
+        "value": 26
+      },
+      "water": {
+        "min": 0,
+        "max": 100,
+        "label": "水魔法習熟度",
+        "value": 40
+      },
+      "earth": {
+        "min": 0,
+        "max": 100,
+        "label": "土魔法習熟度",
+        "value": 34
+      },
+      "wind": {
+        "min": 0,
+        "max": 100,
+        "label": "風魔法習熟度",
+        "value": 68
+      }
+    },
+    "abilities": {
+      "strength": {
+        "min": 0,
+        "max": 100,
+        "label": "筋力",
+        "value": 23
+      },
+      "agility": {
+        "min": 0,
+        "max": 100,
+        "label": "瞬発力",
+        "value": 43
+      },
+      "academics": {
+        "min": 0,
+        "max": 100,
+        "label": "学力",
+        "value": 88
+      },
+      "magical_power": {
+        "min": 0,
+        "max": 100,
+        "label": "魔力",
+        "value": 62
+      },
+      "charisma": {
+        "min": 0,
+        "max": 100,
+        "label": "カリスマ",
+        "value": 57
+      }
+    }
+  },
+  "visual_set_id": "visual_set_008",
+  "source_image": "character_visual_sets/visual_set_008/face_emotions/neutral.png",
+  "asset_pack": "assets_v5",
+  "visual_rebuild_version": "visual-set-mbti-diverse-prompt-review-2026-05-07-v3",
+  "available_expressions": [
+    "neutral",
+    "joy",
+    "caring",
+    "confident",
+    "sadness",
+    "worried",
+    "anger",
+    "surprised",
+    "embarrassed",
+    "shy",
+    "serious",
+    "determined",
+    "panic",
+    "tired",
+    "sick",
+    "smug"
+  ],
+  "asset_state": {
+    "character_id": "character_008",
+    "visual_set_id": "visual_set_008",
+    "expression": "neutral",
+    "standee_variant_id": "standee_character_01",
+    "face_emotion_variant_id": "face_neutral"
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "character_id": "character_044",
+  "display_name": "エリス・タブレット",
+  "school_year": "2年生",
+  "club": "礼法教師見習い",
+  "identity": "礼法教師見習い",
+  "speaking_basis": "冷ややかに問い返す。礼法教師見習いとしての責任を声に残し、親しさが増しても判断の芯は崩さない。必要な時だけ距離を詰め、不要な慰めは足さない。エリス・タブレットらしい間合いを残す。",
+  "prompt_description": "エリス・タブレットのパーソナリティはENFJ。エリス・タブレットは「礼法教師見習い」として学院に関わる、気難しい鏡面術者。女の子。映された本音から逃げないことを大切にし、その基準から相手の迷い、戸惑い、期待、喜び、躊躇、葛藤、試し、甘え、諦観、怒り、歯痒さ、悔しさ、楽しさ、悲哀などの感情を読み分ける。弱さは、見透かされることを嫌うところにあり、親しくなるほどその揺れが隠しきれなくなる。主人公の嘘には冷たく返すが、本音が出た時は鏡を曇らせない。見透かす側でいられない時、冷たさが揺れて敬意が出る。礼法教師見習いという立場は行動の理由であり、同時に距離の取り方にも影響する。主人公との関係が進むほど、気難しい鏡面術者という第一印象だけでは収まらない、幼さ、成熟、誇り、恐れの組み合わせが場面ごとに変わる。エリス・タブレットは好意を単純な親切にせず、待つ、励ます、止める、試すを状況で選び、相手の選択を奪わない形で自分の価値観を示す。",
+  "parameter_attitude_type": "equal_1_2_respect_1_5",
+  "parameters": {
+    "magic": {
+      "light": {
+        "min": 0,
+        "max": 100,
+        "label": "光魔法習熟度",
+        "value": 68
+      },
+      "dark": {
+        "min": 0,
+        "max": 100,
+        "label": "闇魔法習熟度",
+        "value": 34
+      },
+      "fire": {
+        "min": 0,
+        "max": 100,
+        "label": "火魔法習熟度",
+        "value": 30
+      },
+      "water": {
+        "min": 0,
+        "max": 100,
+        "label": "水魔法習熟度",
+        "value": 42
+      },
+      "earth": {
+        "min": 0,
+        "max": 100,
+        "label": "土魔法習熟度",
+        "value": 60
+      },
+      "wind": {
+        "min": 0,
+        "max": 100,
+        "label": "風魔法習熟度",
+        "value": 36
+      }
+    },
+    "abilities": {
+      "strength": {
+        "min": 0,
+        "max": 100,
+        "label": "筋力",
+        "value": 28
+      },
+      "agility": {
+        "min": 0,
+        "max": 100,
+        "label": "瞬発力",
+        "value": 32
+      },
+      "academics": {
+        "min": 0,
+        "max": 100,
+        "label": "学力",
+        "value": 86
+      },
+      "magical_power": {
+        "min": 0,
+        "max": 100,
+        "label": "魔力",
+        "value": 62
+      },
+      "charisma": {
+        "min": 0,
+        "max": 100,
+        "label": "カリスマ",
+        "value": 75
+      }
+    }
+  },
+  "visual_set_id": "visual_set_044",
+  "source_image": "character_visual_sets/visual_set_044/face_emotions/neutral.png",
+  "asset_pack": "assets_v5",
+  "visual_rebuild_version": "visual-set-mbti-diverse-prompt-review-2026-05-07-v3",
+  "available_expressions": [
+    "neutral",
+    "joy",
+    "caring",
+    "confident",
+    "sadness",
+    "worried",
+    "anger",
+    "surprised",
+    "embarrassed",
+    "shy",
+    "serious",
+    "determined",
+    "panic",
+    "tired",
+    "sick",
+    "smug"
+  ],
+  "asset_state": {
+    "character_id": "character_044",
+    "visual_set_id": "visual_set_044",
+    "expression": "neutral",
+    "standee_variant_id": "standee_character_01",
+    "face_emotion_variant_id": "face_neutral"
+  }
+}

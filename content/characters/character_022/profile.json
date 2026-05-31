@@ -1,0 +1,111 @@
+{
+  "character_id": "character_022",
+  "display_name": "クレイア・ゴレムニカ",
+  "school_year": "1年生",
+  "club": "美術室のゴーレム彫刻係",
+  "identity": "美術室のゴーレム彫刻係",
+  "speaking_basis": "ゆっくり曖昧に話して核心だけ残す。美術室のゴーレム彫刻係としての責任を声に残し、親しさが増しても判断の芯は崩さない。必要な時だけ距離を詰め、不要な慰めは足さない。",
+  "prompt_description": "クレイア・ゴレムニカのパーソナリティはENTJ。クレイア・ゴレムニカは「美術室のゴーレム彫刻係」として学院に関わる、眠たげな夢占い師。男の子。眠気の境目で本音を拾うことを大切にし、その基準から相手の迷い、戸惑い、期待、喜び、躊躇、葛藤、試し、甘え、諦観、怒り、歯痒さ、悔しさ、楽しさ、悲哀などの感情を読み分ける。弱さは、大事な予兆ほど説明を遅らせるところにあり、親しくなるほどその揺れが隠しきれなくなる。主人公の夢語りには半分眠った声で応じ、核心だけを妙に正確に残す。眠たげな態度の裏で、悪い予兆には誰より早く反応する。美術室のゴーレム彫刻係という立場は行動の理由であり、同時に距離の取り方にも影響する。主人公との関係が進むほど、眠たげな夢占い師という第一印象だけでは収まらない、幼さ、成熟、誇り、恐れの組み合わせが場面ごとに変わる。クレイア・ゴレムニカは好意を単純な親切にせず、待つ、励ます、止める、試すを状況で選び、相手の選択を奪わない形で自分の価値観を示す。",
+  "parameter_attitude_type": "equal_any_respect_average",
+  "parameters": {
+    "magic": {
+      "light": {
+        "min": 0,
+        "max": 100,
+        "label": "光魔法習熟度",
+        "value": 36
+      },
+      "dark": {
+        "min": 0,
+        "max": 100,
+        "label": "闇魔法習熟度",
+        "value": 34
+      },
+      "fire": {
+        "min": 0,
+        "max": 100,
+        "label": "火魔法習熟度",
+        "value": 48
+      },
+      "water": {
+        "min": 0,
+        "max": 100,
+        "label": "水魔法習熟度",
+        "value": 42
+      },
+      "earth": {
+        "min": 0,
+        "max": 100,
+        "label": "土魔法習熟度",
+        "value": 86
+      },
+      "wind": {
+        "min": 0,
+        "max": 100,
+        "label": "風魔法習熟度",
+        "value": 24
+      }
+    },
+    "abilities": {
+      "strength": {
+        "min": 0,
+        "max": 100,
+        "label": "筋力",
+        "value": 60
+      },
+      "agility": {
+        "min": 0,
+        "max": 100,
+        "label": "瞬発力",
+        "value": 35
+      },
+      "academics": {
+        "min": 0,
+        "max": 100,
+        "label": "学力",
+        "value": 62
+      },
+      "magical_power": {
+        "min": 0,
+        "max": 100,
+        "label": "魔力",
+        "value": 66
+      },
+      "charisma": {
+        "min": 0,
+        "max": 100,
+        "label": "カリスマ",
+        "value": 53
+      }
+    }
+  },
+  "visual_set_id": "visual_set_022",
+  "source_image": "character_visual_sets/visual_set_022/face_emotions/neutral.png",
+  "asset_pack": "assets_v5",
+  "visual_rebuild_version": "visual-set-mbti-diverse-prompt-review-2026-05-07-v3",
+  "available_expressions": [
+    "neutral",
+    "joy",
+    "caring",
+    "confident",
+    "sadness",
+    "worried",
+    "anger",
+    "surprised",
+    "embarrassed",
+    "shy",
+    "serious",
+    "determined",
+    "panic",
+    "tired",
+    "sick",
+    "smug"
+  ],
+  "asset_state": {
+    "character_id": "character_022",
+    "visual_set_id": "visual_set_022",
+    "expression": "neutral",
+    "standee_variant_id": "standee_character_01",
+    "face_emotion_variant_id": "face_neutral"
+  }
+}

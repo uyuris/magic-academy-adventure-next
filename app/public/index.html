@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Magic Academy Adventure Next</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Playable Web Build</p>
+        <h1>Magic Academy Adventure Next</h1>
+      </div>
+      <nav class="screen-tabs" aria-label="screen tabs">
+        <button data-screen="world">ワールド</button>
+        <button data-screen="field">フィールド</button>
+        <button data-screen="interaction">インタラクション</button>
+        <button data-screen="training"><span>トレーニング</span><span hidden>鍛錬</span></button>
+        <button data-screen="event">イベント</button>
+        <button data-screen="inventory">所持品・所持金</button>
+        <button data-screen="shop">購買</button>
+        <button data-screen="debug">デバッグ</button>
+        <button data-screen="title">タイトル</button>
+        <button data-screen="academy-map" class="active">学院マップ</button>
+        <button data-screen="academy-companion">会話相手</button>
+        <button data-screen="academy-conversation-session">会話セッション</button>
+        <button data-screen="academy-training">鍛錬</button>
+        <button data-screen="academy-room">自室</button>
+        <button data-screen="slot-load">ロード</button>
+        <button data-screen="settings">設定</button>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <section id="title-screen" class="screen title-hero-screen" aria-labelledby="title-title">
+        <div class="title-screen-shell">
+          <h2 id="title-title">STARFALL MAGIC ACADEMY</h2>
+          <div class="title-action-layout">
+            <div class="title-primary-actions">
+              <button id="start-new-game" type="button" class="academy-map-action-button title-action-button">最初から始める</button>
+              <button id="open-load-screen" type="button" class="academy-map-action-button title-action-button">ロード</button>
+            </div>
+            <div class="title-settings-action">
+              <button id="open-settings-screen" type="button" class="academy-map-action-button title-action-button">設定</button>
+            </div>
+          </div>
+          <p id="title-status" class="title-status" aria-live="polite" hidden></p>
+        </div>
+      </section>
+
+      <section id="slot-load-screen" class="screen" aria-labelledby="slot-load-title">
+        <div class="slot-load-shell">
+          <div class="screen-heading slot-load-screen-heading">
+            <p class="eyebrow">Load Game</p>
+            <h2 id="slot-load-title">ロードするデータを選ぶ</h2>
+            <p>各セーブデータは独立しています。ここで選んだスロットだけを読み込みます。</p>
+          </div>
+          <section class="app-card slot-load-card" aria-labelledby="slot-load-list-title">
+            <div class="panel-title-row">
+              <div>
+                <p class="eyebrow">Save Slots</p>
+                <h3 id="slot-load-list-title">保存データ一覧</h3>
+              </div>
+              <div class="slot-load-action-row">
+                <button id="slot-load-resume-play" type="button" class="academy-map-action-button secondary" disabled>プレイに戻る</button>
+                <button id="back-to-title-screen" type="button" class="academy-map-action-button secondary">タイトルに戻る</button>
+              </div>
+            </div>
+            <div id="slot-load-list" class="continuity-record-list slot-load-list" aria-live="polite"></div>
+          </section>
+        </div>
+        <dialog id="slot-load-delete-confirm-dialog" class="interaction-detail-dialog" aria-labelledby="slot-load-delete-confirm-title">
+          <form method="dialog" class="interaction-detail-card academy-map-location-card">
+            <div class="panel-title-row">
+              <div>
+                <p class="eyebrow">Delete Slot</p>
+                <h3 id="slot-load-delete-confirm-title">セーブデータ削除確認</h3>
+              </div>
+            </div>
+            <p class="interaction-detail-text">スロットを削除しますか？</p>
+            <div class="dialog-action-row academy-map-dialog-actions">
+              <button id="slot-load-delete-confirm-submit" type="button" class="academy-map-action-button primary">削除する</button>
+              <button id="slot-load-delete-confirm-cancel" type="button" class="academy-map-action-button secondary">削除しない</button>
+            </div>
+          </form>
+        </dialog>
+      </section>
+
+      <section id="world-screen" class="screen" aria-labelledby="world-title">
+        <div class="screen-heading">
+          <p class="eyebrow">World</p>
+          <h2 id="world-title">星灯魔法学院について</h2>
+          <p>学院全体の設定を編集します。この文章は会話プロンプトのワールド設定として、舞台情報より上に入ります。</p>
+        </div>
+        <section class="world-settings-panel app-card" aria-labelledby="world-settings-title">
+          <p class="eyebrow">World Prompt</p>
+          <h3 id="world-settings-title">星灯魔法学院について</h3>
+          <label class="character-description-editor">
+            ユーザー名（会話プロンプト上のプレイヤー名）
+            <input id="player-name" type="text" autocomplete="name" placeholder="主人公" />
+          </label>
+          <label class="character-description-editor">
+            ワールド設定（舞台の上にプロンプト注入されます）
+            <textarea id="world-description"></textarea>
+          </label>
+          <section id="player-parameter-presets" class="parameter-preset-panel" aria-label="player parameter presets">
+            <div class="parameter-preset-group">
+              <strong>魔法習熟度を一律設定</strong>
+              <div id="magic-parameter-presets" class="parameter-preset-row">
+                <button type="button" data-parameter-preset-group="magic" data-parameter-preset-value="0">0</button>
+                <button type="button" data-parameter-preset-group="magic" data-parameter-preset-value="25">25</button>
+                <button type="button" data-parameter-preset-group="magic" data-parameter-preset-value="50">50</button>
+                <button type="button" data-parameter-preset-group="magic" data-parameter-preset-value="75">75</button>
+                <button type="button" data-parameter-preset-group="magic" data-parameter-preset-value="100">100</button>
+              </div>
+            </div>
+            <div class="parameter-preset-group">
+              <strong>基礎パラメーターを一律設定</strong>
+              <div id="ability-parameter-presets" class="parameter-preset-row">
+                <button type="button" data-parameter-preset-group="abilities" data-parameter-preset-value="0">0</button>
+                <button type="button" data-parameter-preset-group="abilities" data-parameter-preset-value="25">25</button>
+                <button type="button" data-parameter-preset-group="abilities" data-parameter-preset-value="50">50</button>
+                <button type="button" data-parameter-preset-group="abilities" data-parameter-preset-value="75">75</button>
+                <button type="button" data-parameter-preset-group="abilities" data-parameter-preset-value="100">100</button>
+              </div>
+            </div>
+          </section>
+          <section id="player-parameters-editor" class="player-parameters-editor" aria-label="player parameters"></section>
+          <button id="save-world-description" type="button">ワールド設定を保存</button>
+        </section>
+      </section>
+
+      <section id="settings-screen" class="screen" aria-labelledby="settings-title">
+        <div class="academy-map-shell settings-screen-shell">
+          <div class="academy-map-hero settings-screen-hero">
+            <div class="settings-screen-hero-copy">
+              <p class="eyebrow">Settings</p>
+              <h2 id="settings-title">設定</h2>
+              <p>LM Studio の接続先を、このランタイムで使う設定として切り替えます。ローカルホストとローカルネットワーク接続をここで選べます。</p>
+            </div>
+            <div class="settings-screen-hero-actions">
+              <button id="settings-back-to-title" type="button" class="academy-map-action-button secondary">タイトルに戻る</button>
+            </div>
+          </div>
+          <section class="app-card settings-card" aria-labelledby="lmstudio-settings-title">
+            <div class="panel-title-row settings-card-heading">
+              <div>
+                <p class="eyebrow">LM Studio</p>
+                <h3 id="lmstudio-settings-title">接続設定</h3>
+              </div>
+              <p id="lmstudio-settings-status" class="settings-inline-status" aria-live="polite">現在の接続先を読み込みます。</p>
+            </div>
+            <form id="lmstudio-settings-form" class="settings-form">
+              <fieldset class="settings-radio-group">
+                <legend>接続方式</legend>
+                <label class="settings-radio-option" for="lmstudio-connection-mode-localhost">
+                  <input id="lmstudio-connection-mode-localhost" type="radio" name="lmstudio-connection-mode" value="localhost" />
+                  <span>ローカルホスト</span>
+                </label>
+                <label class="settings-radio-option" for="lmstudio-connection-mode-lan">
+                  <input id="lmstudio-connection-mode-lan" type="radio" name="lmstudio-connection-mode" value="lan" />
+                  <span>ローカルネットワーク</span>
+                </label>
+              </fieldset>
+              <div class="settings-field-grid">
+                <label class="character-description-editor settings-field">
+                  接続先ホスト
+                  <input id="lmstudio-host" type="text" inputmode="url" placeholder="127.0.0.1 または 192.168.x.x" />
+                </label>
+                <label class="character-description-editor settings-field">
+                  ポート
+                  <input id="lmstudio-port" type="number" min="1" max="65535" step="1" placeholder="1234" />
+                </label>
+              </div>
+              <p id="lmstudio-base-url" class="settings-base-url">接続URL: 読み込み中…</p>
+              <div class="settings-model-block">
+                <div class="settings-model-heading">
+                  <div>
+                    <p class="eyebrow">Model</p>
+                    <h4>使用モデル</h4>
+                  </div>
+                  <button id="fetch-lmstudio-models" type="button" class="academy-map-action-button secondary">モデル一覧を取得</button>
+                </div>
+                <label class="character-description-editor settings-field settings-model-field">
+                  モデル
+                  <select id="lmstudio-model">
+                    <option value="">モデル一覧を取得してください</option>
+                  </select>
+                </label>
+                <p id="lmstudio-model-status" class="settings-model-status" aria-live="polite">現在モデルを読み込みます。</p>
+              </div>
+              <div class="dialog-action-row settings-action-row">
+                <button id="save-lmstudio-settings" type="submit" class="academy-map-action-button">保存</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section id="academy-map-screen" class="screen active" aria-labelledby="academy-map-title">
+        <div class="academy-map-shell">
+          <div class="academy-map-hero">
+            <div>
+              <p class="eyebrow">Academy Map</p>
+              <h2 id="academy-map-title">星灯魔法学院マップ</h2>
+              <p>地図上の舞台を選ぶと、そのターンで向かう場所を確定できます。</p>
+            </div>
+          </div>
+          <div class="academy-map-canvas" role="img" aria-label="星灯魔法学院の俯瞰地図">
+            <div class="academy-map-grid"></div>
+            <div class="academy-map-spine"></div>
+            <div id="academy-map-stage-layer" class="academy-map-stage-layer" aria-label="学院マップ上の舞台"></div>
+            <div id="academy-map-hover-tooltip" class="academy-map-hover-tooltip" aria-live="polite">
+              <strong id="academy-map-hover-stage">舞台</strong>
+              <small id="academy-map-hover-description">舞台の説明文はまだありません。</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="academy-companion-screen" class="screen" aria-labelledby="academy-companion-title">
+        <div class="academy-map-shell academy-companion-shell">
+          <div class="academy-map-hero">
+            <div>
+              <p class="eyebrow">Conversation Partner</p>
+              <h2 id="academy-companion-title">会話相手の選択</h2>
+              <p id="academy-companion-stage-description">下のキャラクター一覧から会話相手を選択してください。</p>
+            </div>
+            <div class="academy-map-status-card">
+              <span>CONFIRMED STAGE</span>
+              <button id="academy-companion-stage-name" type="button" class="academy-companion-stage-name-button">舞台</button>
+              <small id="academy-companion-stage-summary">舞台の説明文はまだありません。</small>
+            </div>
+          </div>
+          <div id="academy-companion-list" class="academy-companion-grid" aria-label="会話相手候補"></div>
+          <div class="dialog-action-row academy-map-dialog-actions">
+            <button id="academy-companion-back-to-map" type="button" class="academy-map-action-button secondary">学院マップに戻る</button>
+          </div>
+          <dialog id="academy-companion-stage-detail-dialog" class="interaction-detail-dialog field-location-detail-dialog" aria-labelledby="academy-companion-stage-detail-title">
+            <form method="dialog" class="interaction-detail-card academy-map-location-card">
+              <div class="panel-title-row">
+                <div>
+                  <p class="eyebrow">Stage Detail</p>
+                  <h3 id="academy-companion-stage-detail-title">舞台</h3>
+                </div>
+                <button type="submit" class="academy-map-action-button secondary" aria-label="舞台詳細を閉じる">閉じる</button>
+              </div>
+              <div id="academy-companion-stage-detail-image" class="field-location-detail-image" role="img" aria-label="舞台画像"></div>
+              <p id="academy-companion-stage-detail-text" class="interaction-detail-text academy-conversation-session-location-detail-text"></p>
+            </form>
+          </dialog>
+          <dialog id="academy-companion-character-detail-dialog" class="interaction-detail-dialog academy-companion-character-detail-dialog" aria-labelledby="academy-companion-character-detail-title">
+            <form method="dialog" class="interaction-detail-card academy-map-location-card">
+              <div class="panel-title-row">
+                <div>
+                  <p class="eyebrow">Conversation Partner</p>
+                  <h3 id="academy-companion-character-detail-title">会話相手</h3>
+                </div>
+                <div class="dialog-action-row academy-map-dialog-actions">
+                  <button id="start-academy-companion-character" type="button" class="academy-map-action-button primary">このキャラと話す</button>
+                  <button type="submit" class="academy-map-action-button secondary" aria-label="会話相手詳細を閉じる">閉じる</button>
+                </div>
+              </div>
+              <div class="character-detail-layout academy-companion-character-detail-layout">
+                <figure class="character-detail-standee-frame academy-companion-standee-frame">
+                  <img id="academy-companion-character-detail-standee" class="character-detail-standee" alt="会話相手の一枚絵" />
+                </figure>
+                <div class="character-detail-info academy-companion-character-detail-info">
+                  <section id="academy-companion-character-parameters" class="interaction-character-parameters" aria-label="会話相手のパラメーター"></section>
+                </div>
+              </div>
+            </form>
+          </dialog>
+        </div>
+      </section>
+
+      <section id="field-screen" class="screen" aria-labelledby="field-title">
+        <div class="screen-heading">
+          <p class="eyebrow">Field</p>
+          <h2 id="field-title">フィールドマップ</h2>
+          <p>行き先カードを選ぶと舞台が切り替わります。選んだ舞台は、そのまま会話開始時の舞台に入ります。</p>
+        </div>
+        <div class="field-card app-card">
+          <div id="field-left-column" class="field-left-column">
+            <section class="field-route-panel app-card" aria-labelledby="field-route-title">
+              <div class="panel-title-row">
+                <div>
+                  <p class="eyebrow">Move</p>
+                  <h3 id="field-route-title">移動先を選ぶ</h3>
+                </div>
+                <button id="field-current-location-button" class="interaction-name-button selected-character-name" type="button">現在地</button>
+              </div>
+              <p class="panel-help">カードを押すと、その場所へ移動します。移動後、その舞台の詳細が開きます。</p>
+              <div id="field-route-list" class="field-route-list" aria-label="field route list"></div>
+            </section>
+            <dialog id="field-location-detail-dialog" class="interaction-detail-dialog field-location-detail-dialog" aria-labelledby="field-location-detail-title">
+              <form method="dialog" class="interaction-detail-card">
+                <div class="panel-title-row">
+                  <h3 id="field-location-detail-title">現在地</h3>
+                  <button type="submit" aria-label="舞台詳細を閉じる">閉じる</button>
+                </div>
+                <div id="field-location-detail-image" class="field-location-detail-image" role="img" aria-label="現在地画像"></div>
+                <p id="field-location-detail-text" class="interaction-detail-text"></p>
+              </form>
+            </dialog>
+          </div>
+
+          <div id="field-right-column" class="field-right-column">
+          <section class="character-select-panel app-card" aria-labelledby="character-select-title">
+            <div class="panel-title-row">
+              <div>
+                <p class="eyebrow">Interaction Entry</p>
+                <h3 id="character-select-title">話すキャラを選ぶ</h3>
+              </div>
+              <div class="selected-character-pill">
+                <button id="selected-character-name-button" class="interaction-name-button selected-character-name" type="button">loading...</button>
+                <p id="selected-character-source" class="asset-source-line"></p>
+              </div>
+            </div>
+            <div id="character-selection-list" class="character-selection-list" role="listbox" aria-label="character list"></div>
+            <div class="button-row">
+              <button id="start-selected-character" type="button" class="primary-action">このキャラと話す</button>
+            </div>
+          </section>
+          <dialog id="field-character-detail-dialog" class="interaction-detail-dialog field-character-detail-dialog" aria-labelledby="field-character-detail-title">
+            <form method="dialog" class="interaction-detail-card">
+              <div class="panel-title-row">
+                <h3 id="field-character-detail-title">選択中のキャラ</h3>
+                <div class="dialog-action-row">
+                  <button id="start-field-character-from-detail" type="button" class="primary-action">このキャラと会話する</button>
+                  <button type="submit" aria-label="キャラ詳細を閉じる">閉じる</button>
+                </div>
+              </div>
+              <div class="character-detail-layout">
+                <figure class="character-detail-standee-frame">
+                  <img id="field-character-detail-standee" class="character-detail-standee" alt="選択中のキャラの一枚絵" />
+                </figure>
+                <div class="character-detail-info">
+                  <label class="character-description-editor">
+                    キャラ説明（この文章がそのままプロンプトに入ります）
+                    <textarea id="character-prompt-description"></textarea>
+                  </label>
+                  <label class="character-description-editor">
+                    話し方（この文章もプロンプトに入ります）
+                    <textarea id="character-speaking-basis"></textarea>
+                  </label>
+                  <div class="button-row">
+                    <button id="save-character-description" type="button">説明を保存</button>
+                  </div>
+                  <section class="character-continuity-panel" aria-labelledby="character-continuity-title">
+                <h4 id="character-continuity-title">このキャラの記録</h4>
+                <div class="continuity-record-grid">
+                  <article>
+                    <div class="continuity-record-heading">
+                      <strong>Memory</strong>
+                      <button id="delete-character-memory" type="button">Memory削除</button>
+                    </div>
+                    <div id="character-memory-records" class="continuity-record-list"></div>
+                  </article>
+                  <article>
+                    <div class="continuity-record-heading">
+                      <strong>Skills</strong>
+                      <button id="delete-character-skills" type="button">Skills削除</button>
+                    </div>
+                    <div id="character-skill-records" class="continuity-record-list"></div>
+                  </article>
+                  <article>
+                    <div class="continuity-record-heading">
+                      <strong>Work Records</strong>
+                      <button id="delete-character-work-records" type="button">Work Records削除</button>
+                    </div>
+                    <div id="character-work-records" class="continuity-record-list"></div>
+                  </article>
+                </div>
+                  </section>
+                </div>
+              </div>
+            </form>
+          </dialog>
+          </div>
+        </div>
+      </section>
+
+      <section id="interaction-screen" class="screen" aria-label="キャラクターとの会話">
+        <div class="interaction-grid">
+          <figure class="standee-frame app-card">
+            <section id="interaction-location-preview" class="interaction-location-preview" aria-label="現在の場所">
+              <div id="interaction-location-image" class="interaction-location-image" role="img" aria-label="現在の場所画像"></div>
+              <figcaption class="interaction-location-name">
+                <button id="interaction-location-name-button" class="interaction-name-button interaction-location-name-button" type="button">現在地</button>
+              </figcaption>
+            </section>
+            <section class="interaction-character-block" aria-label="選択キャラ">
+              <img id="character-standee" alt="選択キャラの立ち絵プレビュー" />
+              <figcaption class="interaction-character-name">
+                <button id="interaction-character-name-button" class="interaction-name-button interaction-character-name-button" type="button">選択中のキャラ</button>
+              </figcaption>
+            </section>
+          </figure>
+          <dialog id="interaction-location-detail-dialog" class="interaction-detail-dialog field-location-detail-dialog" aria-labelledby="interaction-location-detail-title">
+            <form method="dialog" class="interaction-detail-card">
+              <div class="panel-title-row">
+                <h3 id="interaction-location-detail-title">現在地</h3>
+                <button type="submit" aria-label="舞台詳細を閉じる">閉じる</button>
+              </div>
+              <div id="interaction-location-detail-image" class="field-location-detail-image" role="img" aria-label="現在地画像"></div>
+              <p id="interaction-location-detail-text" class="interaction-detail-text"></p>
+            </form>
+          </dialog>
+          <dialog id="interaction-character-detail-dialog" class="interaction-detail-dialog interaction-character-detail-dialog" aria-labelledby="interaction-character-detail-title">
+            <form method="dialog" class="interaction-detail-card">
+              <div class="panel-title-row">
+                <h3 id="interaction-character-detail-title">選択中のキャラ</h3>
+                <button type="submit" aria-label="キャラ詳細を閉じる">閉じる</button>
+              </div>
+              <div class="character-detail-layout">
+                <figure class="character-detail-standee-frame">
+                  <img id="interaction-character-detail-standee" class="character-detail-standee" alt="選択中のキャラの一枚絵" />
+                </figure>
+                <div class="character-detail-info">
+                  <p id="interaction-character-description" class="interaction-character-description"></p>
+                  <section id="interaction-character-parameters" class="interaction-character-parameters" aria-label="選択キャラのパラメーター"></section>
+                </div>
+              </div>
+            </form>
+          </dialog>
+            <div class="conversation-panel chat-panel app-card">
+              <p class="speaker" id="interaction-speaker">選択中のキャラ</p>
+              <div id="message-stream" class="message-stream" aria-live="polite"></div>
+              <label class="chat-composer">
+                あなた
+                <textarea id="player-input" placeholder="話しかける内容を入力。Enterで送信、Shift+Enterで改行"></textarea>
+              </label>
+              <div class="button-row">
+                <button id="run-conversation" class="primary-action">送信</button>
+                <button id="end-conversation">会話を終える</button>
+              </div>
+            </div>
+        </div>
+      </section>
+
+      <section id="academy-conversation-session-screen" class="screen" aria-label="会話セッション">
+        <div class="academy-map-shell academy-conversation-session-shell">
+          <div class="academy-conversation-session-grid">
+            <figure class="standee-frame app-card academy-conversation-session-standee-frame">
+              <section class="academy-conversation-session-stage-card" aria-label="現在の場所">
+                <div id="academy-conversation-session-location-image" class="interaction-location-image" role="img" aria-label="現在の場所画像"></div>
+                <figcaption>
+                  <button id="academy-conversation-session-location-name-button" type="button" class="interaction-name-button interaction-location-name-button">現在地</button>
+                </figcaption>
+              </section>
+              <section class="interaction-character-block" aria-label="選択キャラ">
+                <img id="academy-conversation-session-character-standee" alt="選択キャラの立ち絵プレビュー" />
+                <figcaption class="interaction-character-name">
+                  <button id="academy-conversation-session-character-name-button" class="interaction-name-button interaction-character-name-button" type="button">選択中のキャラ</button>
+                </figcaption>
+              </section>
+            </figure>
+            <dialog id="academy-conversation-session-location-detail-dialog" class="interaction-detail-dialog field-location-detail-dialog" aria-labelledby="academy-conversation-session-location-detail-title">
+              <form method="dialog" class="interaction-detail-card academy-map-location-card">
+                <div class="panel-title-row">
+                  <div>
+                    <p class="eyebrow">Stage Detail</p>
+                    <h3 id="academy-conversation-session-location-detail-title">現在地</h3>
+                  </div>
+                  <button type="submit" class="academy-map-action-button secondary" aria-label="舞台詳細を閉じる">閉じる</button>
+                </div>
+                <div id="academy-conversation-session-location-detail-image" class="field-location-detail-image" role="img" aria-label="現在地画像"></div>
+                <p id="academy-conversation-session-location-detail-text" class="interaction-detail-text academy-conversation-session-location-detail-text"></p>
+              </form>
+            </dialog>
+            <dialog id="academy-conversation-session-character-detail-dialog" class="interaction-detail-dialog academy-companion-character-detail-dialog" aria-labelledby="academy-conversation-session-character-detail-title">
+              <form method="dialog" class="interaction-detail-card academy-map-location-card">
+                <div class="panel-title-row">
+                  <div>
+                    <p class="eyebrow">Conversation Partner</p>
+                    <h3 id="academy-conversation-session-character-detail-title">選択中のキャラ</h3>
+                  </div>
+                  <button type="submit" class="academy-map-action-button secondary" aria-label="キャラ詳細を閉じる">閉じる</button>
+                </div>
+                <div class="character-detail-layout academy-companion-character-detail-layout">
+                  <figure class="character-detail-standee-frame academy-companion-standee-frame">
+                    <img id="academy-conversation-session-character-detail-standee" class="character-detail-standee" alt="選択中のキャラの一枚絵" />
+                  </figure>
+                  <div class="character-detail-info academy-companion-character-detail-info">
+                    <section id="academy-conversation-session-character-parameters" class="interaction-character-parameters" aria-label="選択キャラのパラメーター"></section>
+                  </div>
+                </div>
+              </form>
+            </dialog>
+            <div class="conversation-panel chat-panel app-card academy-conversation-session-chat-panel">
+              <div id="academy-conversation-session-message-stream" class="message-stream" aria-live="polite"></div>
+              <p id="academy-conversation-session-status" class="conversation-status academy-conversation-session-status" aria-live="polite" hidden></p>
+              <label class="chat-composer">
+                あなた
+                <textarea id="academy-conversation-session-player-input" placeholder="話しかける内容を入力。Enterで送信、Shift+Enterで改行"></textarea>
+              </label>
+              <div class="button-row academy-conversation-session-button-row">
+                <button id="academy-conversation-session-run-conversation" class="academy-map-action-button secondary">送信</button>
+                <button id="academy-conversation-session-end-conversation" class="academy-map-action-button secondary">会話を終える</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="academy-training-screen" class="screen" aria-labelledby="academy-training-title">
+        <div class="academy-map-shell academy-training-shell">
+          <div class="academy-training-hero">
+            <div class="academy-training-hero-copy">
+              <p class="eyebrow">Academy Discipline</p>
+              <h2 id="academy-training-title">鍛錬</h2>
+              <p>星灯の回廊で一週間の曜日巡りに合わせて鍛錬します。属性が曜日と重なる日は効果が強まり、疲労による反動も発生します。</p>
+            </div>
+            <div class="academy-training-orbit-card">
+              <span>現在の曜日</span>
+              <strong id="academy-training-weekday" class="training-weekday">光曜</strong>
+              <small id="academy-training-progress" class="training-progress">行動 0 / 6</small>
+            </div>
+          </div>
+          <div class="academy-training-board">
+            <section class="academy-training-menu-panel" aria-labelledby="academy-training-options-title">
+              <div class="academy-training-panel-heading">
+                <div>
+                  <p class="eyebrow">Discipline Menu</p>
+                  <h3 id="academy-training-options-title">鍛錬を選択</h3>
+                </div>
+                <p>6回行動すると学院マップへ戻ります。</p>
+              </div>
+              <div id="academy-training-options" class="academy-training-options training-options" aria-label="academy training options"></div>
+            </section>
+            <aside class="academy-training-status-panel" aria-labelledby="academy-training-status-title">
+              <div class="academy-training-panel-heading academy-training-status-heading">
+                <div>
+                  <p class="eyebrow">Player Parameters</p>
+                  <h3 id="academy-training-status-title">主人公の現在値</h3>
+                </div>
+              </div>
+              <section id="academy-training-player-parameters" class="academy-training-player-parameters training-player-parameters" aria-label="主人公パラメーター"></section>
+              <section id="academy-training-result" class="academy-training-result training-result" aria-live="polite">
+                <h4>鍛錬状況</h4>
+                <p class="academy-training-summary-row">訓練可能回数: 残り 6 / 6</p>
+                <p class="academy-training-summary-row">現在の曜日: 光曜（光）</p>
+              </section>
+            </aside>
+          </div>
+        </div>
+        <div id="academy-training-effect-overlay" class="academy-training-effect-overlay training-effect-overlay" role="status" aria-live="polite"></div>
+        <div id="academy-training-day-transition" class="academy-training-day-transition training-day-transition" role="status" aria-live="polite"></div>
+      </section>
+
+      <section id="academy-loading-screen" class="screen" aria-labelledby="academy-loading-title">
+        <div class="academy-loading-shell">
+          <figure class="academy-loading-image-frame">
+            <img id="academy-loading-image" alt="学院ロード画面" />
+          </figure>
+          <div class="academy-loading-copy">
+            <p class="eyebrow">Loading</p>
+            <h2 id="academy-loading-title">学院マップへ移動中</h2>
+            <p id="academy-loading-status">会話セッションの整理と学院マップの準備を待っています。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="academy-room-screen" class="screen" aria-labelledby="academy-room-title">
+        <div class="academy-map-shell academy-room-shell">
+          <div class="academy-map-hero academy-room-hero">
+            <div class="academy-room-hero-copy">
+              <p class="eyebrow">My Room</p>
+              <h2 id="academy-room-title">自室</h2>
+              <p>一週間の終わりに主人公の能力、現在のバディー、所持金と所持品を確認できます。</p>
+            </div>
+            <div class="academy-map-status-card academy-room-action-card">
+              <div class="academy-room-action-header-row">
+                <div class="academy-room-action-copy">
+                  <span>Actions</span>
+                  <small>次の行動を選びます</small>
+                </div>
+                <div class="academy-room-week-row" aria-label="現在の週数">
+                  <p class="eyebrow">Current Week</p>
+                  <strong id="academy-room-week">第1週</strong>
+                </div>
+              </div>
+              <button id="academy-room-start-training" type="button" class="academy-map-action-button secondary">次の一週間に進む</button>
+              <button id="academy-room-skip-training" type="button" class="academy-map-action-button secondary">鍛錬をサボる</button>
+              <button id="academy-room-open-load" type="button" class="academy-map-action-button secondary">ロード</button>
+            </div>
+          </div>
+          <div class="academy-room-grid">
+            <section class="academy-room-panel app-card academy-room-player-panel" aria-labelledby="academy-room-player-title">
+              <div class="panel-title-row academy-room-player-title-row">
+                <div>
+                  <p class="eyebrow">Player</p>
+                  <h3 id="academy-room-player-title">主人公の能力</h3>
+                </div>
+              </div>
+              <section id="academy-room-player-parameters" class="academy-training-player-parameters training-player-parameters" aria-label="主人公のパラメーター"></section>
+            </section>
+            <section class="academy-room-panel app-card academy-room-relationship-panel" aria-labelledby="academy-room-buddy-title">
+              <div class="panel-title-row academy-room-buddy-title-row">
+                <div>
+                  <p class="eyebrow">Buddy</p>
+                  <h3 id="academy-room-buddy-title">現在のバディー</h3>
+                </div>
+              </div>
+              <div class="academy-room-relationship-list" aria-label="バディーとエネミーの関係一覧">
+                <div id="academy-room-buddy-card" class="academy-room-buddy-card" aria-live="polite"></div>
+                <div id="academy-room-buddy-empty" class="academy-room-buddy-empty" aria-live="polite"></div>
+                <div class="panel-title-row academy-room-enemy-title-row">
+                  <div>
+                    <p class="eyebrow">Enemy</p>
+                    <h3 id="academy-room-enemy-title">エネミー</h3>
+                  </div>
+                  <p id="academy-room-enemy-count" class="academy-room-item-count">0人</p>
+                </div>
+                <div id="academy-room-enemy-list" class="academy-room-enemy-list" aria-label="現在のエネミーリスト"></div>
+              </div>
+            </section>
+            <section class="academy-room-panel app-card academy-room-inventory-panel" aria-label="所持金と所持品">
+              <div class="academy-room-inventory-stack">
+                <div class="academy-room-money-section">
+                  <div class="panel-title-row academy-room-inventory-subtitle-row academy-room-money-row">
+                    <div>
+                      <p class="eyebrow">Money</p>
+                      <h4>所持金</h4>
+                    </div>
+                    <strong id="academy-room-money">loading...</strong>
+                  </div>
+                </div>
+                <div class="academy-room-items-section">
+                  <div class="panel-title-row academy-room-inventory-subtitle-row">
+                    <div>
+                      <p class="eyebrow">Items</p>
+                      <h4>所持品</h4>
+                    </div>
+                    <p id="academy-room-item-count" class="academy-room-item-count">0種類</p>
+                  </div>
+                  <div id="academy-room-inventory-items" class="academy-room-inventory-items" aria-label="自室の所持品リスト"></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="training-screen" class="screen" aria-labelledby="training-title">
+        <div class="screen-heading">
+          <p class="eyebrow">Training</p>
+          <h2 id="training-title">トレーニング</h2>
+          <p>従来のトレーニング確認画面です。学院向けの新しい演出付き画面は、会話セッションの右隣にある「鍛錬」から開きます。</p>
+        </div>
+        <div class="training-legacy-layout">
+          <section class="training-panel app-card" aria-labelledby="training-options-title">
+            <div class="panel-title-row training-title-row">
+              <div>
+                <p class="eyebrow">Training Menu</p>
+                <h3 id="training-options-title">トレーニングを選択</h3>
+              </div>
+            </div>
+            <p class="training-progress"><span id="training-weekday" class="training-weekday">光曜</span> / <span id="training-progress">行動 0 / 6</span></p>
+            <div id="training-options" class="training-options" aria-label="training options"></div>
+          </section>
+          <section class="training-panel app-card training-status-panel" aria-labelledby="training-status-title">
+            <p class="eyebrow">Player Parameters</p>
+            <h3 id="training-status-title">現在の主人公パラメーター</h3>
+            <section id="training-player-parameters" class="training-player-parameters" aria-label="主人公パラメーター"></section>
+            <section id="training-result" class="training-result" aria-live="polite">まだトレーニングしていません。</section>
+          </section>
+        </div>
+        <div id="training-effect-overlay" class="training-effect-overlay" role="status" aria-live="polite"></div>
+        <div id="training-day-transition" class="training-day-transition" role="status" aria-live="polite"></div>
+      </section>
+
+      <section id="event-screen" class="screen" aria-labelledby="event-title">
+        <div class="screen-heading">
+          <p class="eyebrow">Event</p>
+          <h2 id="event-title">イベント</h2>
+          <p>成立済みで未完了のイベントフラグを確認します。イベント本体は次の実装で追加します。</p>
+        </div>
+        <section class="event-panel app-card" aria-labelledby="event-ready-title">
+          <p class="eyebrow">Ready Events</p>
+          <h3 id="event-ready-title">発生可能なイベント</h3>
+          <p id="event-empty-message" class="panel-help">発生可能なイベントはまだありません。</p>
+          <div id="event-pending-list" class="debug-title-list" aria-label="pending events"></div>
+        </section>
+      </section>
+
+      <section id="inventory-screen" class="screen" aria-labelledby="inventory-title">
+        <div class="screen-heading">
+          <p class="eyebrow">Inventory</p>
+          <h2 id="inventory-title">所持品・所持金</h2>
+          <p>主人公の所持金と所持品を確認します。売却できるものはここから購買へ売れます。</p>
+        </div>
+        <section class="economy-panel app-card" aria-labelledby="inventory-money-title">
+          <p class="eyebrow">Money</p>
+          <h3 id="inventory-money-title">現在の所持金</h3>
+          <p id="inventory-money" class="money-display">loading...</p>
+          <div id="inventory-items" class="economy-item-list" aria-label="inventory items"></div>
+        </section>
+      </section>
+
+      <section id="shop-screen" class="screen" aria-labelledby="shop-title">
+        <div class="shop-shell">
+          <div class="screen-heading shop-screen-heading">
+            <div class="shop-heading-row">
+              <div class="shop-heading-copy">
+                <p class="eyebrow">Shop</p>
+                <h2 id="shop-title">購買</h2>
+                <p>左で所持金と所持品を確認しながら、右で学院購買部の商品を買えます。</p>
+              </div>
+              <div class="shop-heading-actions">
+                <button id="shop-back-to-map" type="button" class="academy-map-action-button secondary shop-back-button">学院マップに戻る</button>
+              </div>
+            </div>
+          </div>
+          <div class="shop-grid">
+            <section class="shop-column shop-inventory-column economy-panel app-card" aria-labelledby="shop-inventory-title">
+              <div class="panel-title-row shop-column-heading">
+                <div>
+                  <p class="eyebrow">Inventory</p>
+                  <h3 id="shop-inventory-title">所持品・所持金</h3>
+                </div>
+                <p id="shop-inventory-money" class="money-display shop-column-money">loading...</p>
+              </div>
+              <p class="panel-help shop-column-help">使えるアイテムはここで使用でき、不要なものはそのまま売却できます。</p>
+              <div id="shop-inventory-items" class="economy-item-list shop-item-list" aria-label="shop inventory items"></div>
+            </section>
+            <section class="shop-column shop-catalog-column economy-panel app-card" aria-labelledby="shop-money-title">
+              <div class="panel-title-row shop-column-heading">
+                <div>
+                  <p class="eyebrow">Academy Store</p>
+                  <h3 id="shop-money-title">学院購買部</h3>
+                </div>
+              </div>
+              <p class="panel-help shop-column-help">各種霊薬を取り揃えている学院購買部。必要な道具や品物を売買できる。</p>
+              <div id="shop-items" class="economy-item-list shop-item-list" aria-label="shop items"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="debug-screen" class="screen" aria-labelledby="debug-title">
+        <div class="screen-heading">
+          <p class="eyebrow">Debug</p>
+          <h2 id="debug-title">デバッグ</h2>
+          <p>フラグ、直近LLMリクエスト、保存操作だけを置いた確認用画面です。</p>
+        </div>
+        <div class="debug-grid">
+          <section class="debug-panel app-card" aria-label="stage flags">
+            <h3>stage flags</h3>
+            <p class="panel-help">フラグをタイトルで表示します。タイトルを押すと、そのフラグの条件・現在値・報酬情報を確認できます。</p>
+            <button id="set-all-flags-on" type="button" class="primary-action">すべてオン</button>
+            <div id="flag-title-list" class="debug-title-list" aria-label="flag title list">loading...</div>
+          </section>
+          <section class="debug-panel app-card" aria-label="event flags">
+            <h3>event flags</h3>
+            <p class="panel-help">イベントフラグをタイトルで表示します。タイトルを押すと、条件・完了フラグ・現在値を確認できます。</p>
+            <div class="button-row">
+              <button id="set-all-event-flags-on" type="button" class="primary-action">すべてオン</button>
+              <button id="set-all-event-flags-off" type="button">すべてオフ</button>
+            </div>
+            <div id="event-flag-title-list" class="debug-title-list" aria-label="event flag title list">loading...</div>
+          </section>
+          <section class="debug-panel app-card" aria-label="relationship flags">
+            <h3>relationship flags</h3>
+            <p class="panel-help">テストプレイ用に、現在のバディーとエネミーを直接変更します。会話後判定と同じ current state とキャラ側 mirror flag を更新します。</p>
+            <label class="debug-control-field">
+              対象キャラクター
+              <select id="relationship-character-select" aria-label="relationship character"></select>
+            </label>
+            <div class="button-row relationship-button-row">
+              <button id="set-debug-buddy" type="button" class="primary-action">バディーにする</button>
+              <button id="clear-debug-buddy" type="button">バディー解除</button>
+            </div>
+            <div class="button-row relationship-button-row">
+              <button id="add-debug-enemy" type="button" class="danger-action">エネミーにする</button>
+              <button id="remove-debug-enemy" type="button">エネミー解除</button>
+              <button id="clear-debug-enemies" type="button">全エネミー解除</button>
+            </div>
+            <pre id="relationship-debug-status" class="debug-state-readout" aria-live="polite">loading...</pre>
+            <div class="debug-control-group">
+              <label class="debug-control-field">
+                経過週数
+                <input id="debug-elapsed-weeks" type="number" min="0" step="1" value="0" aria-label="elapsed weeks" />
+              </label>
+              <button id="set-debug-weeks" type="button">経過週数を反映</button>
+            </div>
+            <pre id="debug-weeks-status" class="debug-state-readout" aria-live="polite">loading...</pre>
+          </section>
+          <section class="debug-panel app-card" aria-label="recent llm requests">
+            <h3>recent LLM requests</h3>
+            <p class="panel-help">直近30件のLLMリクエストを、種類を問わず表示します。タイトルを押すと input / output を分けて確認できます。</p>
+            <div id="llm-request-list" class="llm-request-list debug-title-list" aria-label="llm request list">loading...</div>
+          </section>
+          <section class="debug-panel app-card save-panel" aria-label="save and load">
+            <h3>Save / Load</h3>
+            <div class="save-load-layout">
+              <label class="debug-control-field save-slot-field">
+                セーブスロットID
+                <input id="save-slot-id" value="slot_manual_1" aria-label="save slot id" />
+              </label>
+              <button id="create-save" type="button" class="primary-action">Save作成</button>
+              <label class="debug-control-field save-slot-field">
+                セーブデータ
+                <select id="save-slots" class="save-slot-list" aria-label="save slots"></select>
+              </label>
+              <button id="load-save" type="button">Load</button>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="academy-map-location-dialog" class="interaction-detail-dialog academy-map-location-dialog" aria-labelledby="academy-map-location-title">
+      <form method="dialog" class="interaction-detail-card academy-map-location-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="eyebrow">Stage Preview</p>
+            <h3 id="academy-map-location-title">舞台</h3>
+          </div>
+        </div>
+        <div id="academy-map-location-image" class="academy-map-location-image" role="img" aria-label="舞台画像"></div>
+        <p id="academy-map-location-text" class="interaction-detail-text"></p>
+        <div class="dialog-action-row academy-map-dialog-actions">
+          <button id="academy-map-go-button" type="button" class="academy-map-action-button primary">ここに行く</button>
+          <button id="academy-map-close-button" type="submit" class="academy-map-action-button secondary" aria-label="学院マップの舞台詳細を閉じる">閉じる</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="llm-request-detail-dialog" class="interaction-detail-dialog" aria-labelledby="llm-request-detail-title">
+      <form method="dialog" class="interaction-detail-card llm-request-detail-card">
+        <div class="panel-title-row">
+          <h3 id="llm-request-detail-title">LLM request</h3>
+          <button type="submit" aria-label="LLMリクエスト詳細を閉じる">閉じる</button>
+        </div>
+        <p id="llm-request-detail-meta" class="asset-source-line"></p>
+        <h4>input</h4>
+        <pre id="llm-request-detail-input" class="llm-request-detail-text"></pre>
+        <h4>output</h4>
+        <pre id="llm-request-detail-output" class="llm-request-detail-text"></pre>
+      </form>
+    </dialog>
+
+    <dialog id="flag-detail-dialog" class="interaction-detail-dialog" aria-labelledby="flag-detail-title">
+      <form method="dialog" class="interaction-detail-card llm-request-detail-card">
+        <div class="panel-title-row">
+          <h3 id="flag-detail-title">stage flag</h3>
+          <div class="dialog-action-row">
+            <button id="toggle-flag-active" type="button">フラグをオンにする</button>
+            <button id="toggle-flag-judgment-flow" type="button">判定フローを無効化する</button>
+            <button type="submit" aria-label="フラグ詳細を閉じる">閉じる</button>
+          </div>
+        </div>
+        <pre id="flag-detail-body" class="llm-request-detail-text"></pre>
+      </form>
+    </dialog>
+
+    <dialog id="event-flag-detail-dialog" class="interaction-detail-dialog" aria-labelledby="event-flag-detail-title">
+      <form method="dialog" class="interaction-detail-card llm-request-detail-card">
+        <div class="panel-title-row">
+          <h3 id="event-flag-detail-title">event flag</h3>
+          <div class="dialog-action-row">
+            <button id="toggle-event-flag-active" type="button">イベントフラグをオンにする</button>
+            <button id="toggle-event-completion-active" type="button">完了フラグをオンにする</button>
+            <button type="submit" aria-label="イベントフラグ詳細を閉じる">閉じる</button>
+          </div>
+        </div>
+        <pre id="event-flag-detail-body" class="llm-request-detail-text"></pre>
+      </form>
+    </dialog>
+
+    <div id="conversation-processing-toast" class="processing-toast" role="status" aria-live="polite">処理中です。しばらくお待ちください。</div>
+    <div id="economy-message-box" class="economy-message-box" role="status" aria-live="polite"></div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

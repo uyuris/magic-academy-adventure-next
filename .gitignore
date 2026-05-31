@@ -1,0 +1,19 @@
+node_modules/
+.DS_Store
+dist/
+coverage/
+.env
+.env.*
+
+# Runtime-mutable state
+data/mutable/
+work/reports/generated/
+tmp/
+
+# Local runtime config
+app/config/imported_runtime_staging/lmstudio.json
+app/config/lmstudio.json
+
+# Removed duplicate asset mirrors
+assets/source_archives/imported_generations/runtime_staging_character_visual_sets/
+imports/snapshots/runtime-staging/character_visual_sets_reference/

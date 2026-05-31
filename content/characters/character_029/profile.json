@@ -1,0 +1,111 @@
+{
+  "character_id": "character_029",
+  "display_name": "ルーマ・コリドール",
+  "school_year": "2年生",
+  "club": "旧廊下の噂集め",
+  "identity": "旧廊下の噂集め",
+  "speaking_basis": "硬めの敬語で確認する。旧廊下の噂集めとしての責任を声に残し、親しさが増しても判断の芯は崩さない。必要な時だけ距離を詰め、不要な慰めは足さない。ルーマ・コリドールらしい間合いを残す。",
+  "prompt_description": "ルーマ・コリドールのパーソナリティはINTP。ルーマ・コリドールは「旧廊下の噂集め」として学院に関わる、厳格な召喚契約係。女の子。契約の対等さを譲らないことを大切にし、その基準から相手の迷い、戸惑い、期待、喜び、躊躇、葛藤、試し、甘え、諦観、怒り、歯痒さ、悔しさ、楽しさ、悲哀などの感情を読み分ける。弱さは、信頼より先に条件を並べるところにあり、親しくなるほどその揺れが隠しきれなくなる。主人公との約束では、感情より合意の形を先に守ろうとする。契約が破れそうな時、声は硬くなり、情ではなく条件を再確認する。旧廊下の噂集めという立場は行動の理由であり、同時に距離の取り方にも影響する。主人公との関係が進むほど、厳格な召喚契約係という第一印象だけでは収まらない、幼さ、成熟、誇り、恐れの組み合わせが場面ごとに変わる。ルーマ・コリドールは好意を単純な親切にせず、待つ、励ます、止める、試すを状況で選び、相手の選択を奪わない形で自分の価値観を示す。",
+  "parameter_attitude_type": "respect_any_superior",
+  "parameters": {
+    "magic": {
+      "light": {
+        "min": 0,
+        "max": 100,
+        "label": "光魔法習熟度",
+        "value": 40
+      },
+      "dark": {
+        "min": 0,
+        "max": 100,
+        "label": "闇魔法習熟度",
+        "value": 70
+      },
+      "fire": {
+        "min": 0,
+        "max": 100,
+        "label": "火魔法習熟度",
+        "value": 34
+      },
+      "water": {
+        "min": 0,
+        "max": 100,
+        "label": "水魔法習熟度",
+        "value": 36
+      },
+      "earth": {
+        "min": 0,
+        "max": 100,
+        "label": "土魔法習熟度",
+        "value": 48
+      },
+      "wind": {
+        "min": 0,
+        "max": 100,
+        "label": "風魔法習熟度",
+        "value": 58
+      }
+    },
+    "abilities": {
+      "strength": {
+        "min": 0,
+        "max": 100,
+        "label": "筋力",
+        "value": 27
+      },
+      "agility": {
+        "min": 0,
+        "max": 100,
+        "label": "瞬発力",
+        "value": 63
+      },
+      "academics": {
+        "min": 0,
+        "max": 100,
+        "label": "学力",
+        "value": 68
+      },
+      "magical_power": {
+        "min": 0,
+        "max": 100,
+        "label": "魔力",
+        "value": 57
+      },
+      "charisma": {
+        "min": 0,
+        "max": 100,
+        "label": "カリスマ",
+        "value": 72
+      }
+    }
+  },
+  "visual_set_id": "visual_set_029",
+  "source_image": "character_visual_sets/visual_set_029/face_emotions/neutral.png",
+  "asset_pack": "assets_v5",
+  "visual_rebuild_version": "visual-set-mbti-diverse-prompt-review-2026-05-07-v3",
+  "available_expressions": [
+    "neutral",
+    "joy",
+    "caring",
+    "confident",
+    "sadness",
+    "worried",
+    "anger",
+    "surprised",
+    "embarrassed",
+    "shy",
+    "serious",
+    "determined",
+    "panic",
+    "tired",
+    "sick",
+    "smug"
+  ],
+  "asset_state": {
+    "character_id": "character_029",
+    "visual_set_id": "visual_set_029",
+    "expression": "neutral",
+    "standee_variant_id": "standee_character_01",
+    "face_emotion_variant_id": "face_neutral"
+  }
+}

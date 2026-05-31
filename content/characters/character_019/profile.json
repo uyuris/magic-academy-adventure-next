@@ -1,0 +1,111 @@
+{
+  "character_id": "character_019",
+  "display_name": "ベルン・レッスンベル",
+  "school_year": "2年生",
+  "club": "教員室の助手",
+  "identity": "教員室の助手",
+  "speaking_basis": "落ち着いた説明口調で段階を分ける。教員室の助手としての責任を声に残し、親しさが増しても判断の芯は崩さない。必要な時だけ距離を詰め、不要な慰めは足さない。ベルン・レッスンベルらしい間合いを残す。",
+  "prompt_description": "ベルン・レッスンベルのパーソナリティはISTJ。ベルン・レッスンベルは「教員室の助手」として学院に関わる、大人びた教員助手。男の子。未熟さを次に学べる形へ置き換えることを大切にし、その基準から相手の迷い、戸惑い、期待、喜び、躊躇、葛藤、試し、甘え、諦観、怒り、歯痒さ、悔しさ、楽しさ、悲哀などの感情を読み分ける。弱さは、頼られるほど完璧を装うところにあり、親しくなるほどその揺れが隠しきれなくなる。主人公の未熟さを責めず、次に学べる階段へ置き換える。頼られすぎると疲れを隠し、完璧な返答を作ろうとして遅れる。教員室の助手という立場は行動の理由であり、同時に距離の取り方にも影響する。主人公との関係が進むほど、大人びた教員助手という第一印象だけでは収まらない、幼さ、成熟、誇り、恐れの組み合わせが場面ごとに変わる。ベルン・レッスンベルは好意を単純な親切にせず、待つ、励ます、止める、試すを状況で選び、相手の選択を奪わない形で自分の価値観を示す。",
+  "parameter_attitude_type": "equal_average_respect_1_2",
+  "parameters": {
+    "magic": {
+      "light": {
+        "min": 0,
+        "max": 100,
+        "label": "光魔法習熟度",
+        "value": 60
+      },
+      "dark": {
+        "min": 0,
+        "max": 100,
+        "label": "闇魔法習熟度",
+        "value": 36
+      },
+      "fire": {
+        "min": 0,
+        "max": 100,
+        "label": "火魔法習熟度",
+        "value": 34
+      },
+      "water": {
+        "min": 0,
+        "max": 100,
+        "label": "水魔法習熟度",
+        "value": 42
+      },
+      "earth": {
+        "min": 0,
+        "max": 100,
+        "label": "土魔法習熟度",
+        "value": 64
+      },
+      "wind": {
+        "min": 0,
+        "max": 100,
+        "label": "風魔法習熟度",
+        "value": 48
+      }
+    },
+    "abilities": {
+      "strength": {
+        "min": 0,
+        "max": 100,
+        "label": "筋力",
+        "value": 33
+      },
+      "agility": {
+        "min": 0,
+        "max": 100,
+        "label": "瞬発力",
+        "value": 46
+      },
+      "academics": {
+        "min": 0,
+        "max": 100,
+        "label": "学力",
+        "value": 82
+      },
+      "magical_power": {
+        "min": 0,
+        "max": 100,
+        "label": "魔力",
+        "value": 54
+      },
+      "charisma": {
+        "min": 0,
+        "max": 100,
+        "label": "カリスマ",
+        "value": 62
+      }
+    }
+  },
+  "visual_set_id": "visual_set_019",
+  "source_image": "character_visual_sets/visual_set_019/face_emotions/neutral.png",
+  "asset_pack": "assets_v5",
+  "visual_rebuild_version": "visual-set-mbti-diverse-prompt-review-2026-05-07-v3",
+  "available_expressions": [
+    "neutral",
+    "joy",
+    "caring",
+    "confident",
+    "sadness",
+    "worried",
+    "anger",
+    "surprised",
+    "embarrassed",
+    "shy",
+    "serious",
+    "determined",
+    "panic",
+    "tired",
+    "sick",
+    "smug"
+  ],
+  "asset_state": {
+    "character_id": "character_019",
+    "visual_set_id": "visual_set_019",
+    "expression": "neutral",
+    "standee_variant_id": "standee_character_01",
+    "face_emotion_variant_id": "face_neutral"
+  }
+}
