@@ -1,13 +1,13 @@
 # Magic Academy Adventure Next
 
-Magic Academy Adventure Next is a local-first playable magic-academy adventure project with two execution surfaces:
+Magic Academy Adventure Next is the source/development repository for **STARFALL MAGIC ACADEMY**, a local-first playable magic-academy adventure project with two execution surfaces:
 
 - a Node-powered browser runtime served from `app/public/`
 - an Electron desktop wrapper over the same game/runtime surfaces
 
 This repository is **public-facing development work**, not a polished store-ready release. The goal of the current repo state is that an outside reader can understand what the project is, run the local code/test surfaces, and see the current architectural direction without having to know the private migration history.
 
-For a Japanese player-facing setup guide, see [`USER_README.ja.md`](USER_README.ja.md).
+For the current packaged player release, the GitHub Release notes are the player-facing canonical copy. For a Japanese player-facing setup guide, see [`USER_README.ja.md`](USER_README.ja.md).
 
 ## What is here
 
@@ -43,8 +43,11 @@ This does **not** mean:
 - Node.js with native `fetch` support (Node 18+ recommended)
 - npm
 - LM Studio for normal gameplay/conversation progression
-- a local model/environment that can run the configured LM Studio target; the current player-facing expectation is the `lmstudio-community` Gemma 4 31B `q4_k_m` model with a 64,000 context window, evaluation batch size 2,048, and at least 24GB VRAM
+- a local model/environment that can run the configured LM Studio target; the current game premise is Gemma 4 31B-family local LLM conversation
+- for the documented 24GB VRAM setup, `lmstudio-community` Gemma 4 31B `q4_k_m`, a 64,000 context window, evaluation batch size 2,048, 4bit KV cache quantization, Max Concurrent Predictions `1`, and Unified KV Cache disabled
 - optional: Electron, through the packaged npm scripts below
+
+The recommended packaged-play setup is to run the macOS build on a Mac and connect it to LM Studio's OpenAI-compatible API on the same local network. Windows play and same-machine `localhost` LM Studio can work, but they are less exercised for the current preview.
 
 Install dependencies:
 
@@ -95,7 +98,7 @@ npm run electron:pack
 ## LM Studio setup
 
 Normal gameplay/conversation progression requires an OpenAI-compatible LM Studio endpoint.
-The current player-facing setup expectation is documented in [`USER_README.ja.md`](USER_README.ja.md): `lmstudio-community` Gemma 4 31B `q4_k_m`, context size 64,000, evaluation batch size 2,048, at least 24GB VRAM, Max Concurrent Predictions `1`, Unified KV Cache disabled, and 4bit KV cache quantization for RTX 3090/4090-class 24GB GPUs.
+The player-facing setup guidance is documented in [`USER_README.ja.md`](USER_README.ja.md). In short, the game is designed around Gemma 4 31B-family local LLM conversation. On the author's 24GB VRAM environment, that target requires careful LM Studio settings: `lmstudio-community` Gemma 4 31B `q4_k_m`, context size 64,000, evaluation batch size 2,048, 4bit KV cache quantization, Max Concurrent Predictions `1`, and Unified KV Cache disabled. Larger-VRAM environments may use less restrictive settings, but they are not locally verified by the author.
 
 Committed example config:
 
@@ -105,9 +108,11 @@ Ignored local config path actually used at runtime:
 
 - `app/config/lmstudio.json`
 
-Default example values point at:
+Default example values point at same-machine LM Studio:
 
 - `http://127.0.0.1:1234/v1`
+
+If LM Studio runs on another machine on the same local network, configure the game to use that machine's LAN address instead of `127.0.0.1`.
 
 ### Behavior when LM Studio is not configured
 
@@ -173,7 +178,9 @@ The current repo stance is conservative: visibility of the repository does **not
 ## Known limitations / honesty notes
 
 - LM Studio-backed conversation/game progression requires local configuration and a sufficiently capable LM Studio environment before the game works as intended
-- the current player-facing LM Studio expectation is `lmstudio-community` Gemma 4 31B `q4_k_m`, context size 64,000, evaluation batch size 2,048, at least 24GB VRAM, Max Concurrent Predictions `1`, Unified KV Cache disabled, and 4bit KV cache quantization for RTX 3090/4090-class GPUs
+- the current game premise is Gemma 4 31B-family local LLM conversation; the documented 24GB VRAM setup uses `lmstudio-community` Gemma 4 31B `q4_k_m`, context size 64,000, evaluation batch size 2,048, 4bit KV cache quantization, Max Concurrent Predictions `1`, and Unified KV Cache disabled
+- larger-VRAM LM Studio settings may be relaxed, and disabling KV cache quantization may be preferable for performance, but this is not locally verified by the author
+- the recommended packaged-play path is macOS on Mac connected to LM Studio over the local network; Windows and same-machine `localhost` play are less exercised for the current preview
 - some visual runtime assets may remain outside the committed public tree, so a fresh public clone can be structurally runnable while still being visually incomplete
 - this is still an active development repository, so some developer-facing routes remain present in the local runtime
 - packaging exists, but “publicly visible repo” should not be confused with “final distribution-ready release”

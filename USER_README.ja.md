@@ -1,6 +1,6 @@
-# magic-academy-adventure-next ユーザー向け README
+# STARFALL MAGIC ACADEMY ユーザー向け README
 
-この文書は、Mac/Windows 版の配布ビルドを遊ぶ人向けの説明です。
+この文書は、GitHub Releases で配布されている macOS 版 / Windows 版のゲームを遊ぶ人向けの説明です。
 開発者向けの説明は `README.md` を参照してください。
 
 ## 重要: このゲームは日本語専用です
@@ -10,64 +10,100 @@
 
 英語など他言語でのプレイは、現時点では対応していません。
 
-## 重要: LM Studio がないと動作しません
+## 重要: LM Studio が必要です
 
-本作はローカル LLM を使ったキャラクター会話を中核にしています。
-そのため、**LM Studio が起動しており、指定されたモデルと設定でローカル API が動いていることが必要**です。
-LM Studioへの接続はローカルホスト、もしくはローカルネットワークでの接続を想定しています。
+本作は、ローカル LLM を使ったキャラクター会話を中核にしています。
+通常のゲームプレイには、LM Studio が起動しており、ローカル API が利用できる状態であることが必要です。
+LM Studio への接続は、同じ PC / Mac の localhost、または同じローカルネットワーク上の別マシンを想定しています。
 
 LM Studio がない、モデルが違う、または設定が不足している場合、ゲームは正常に進行しません。
 
-## 推奨・必須環境
+## 推奨プレイ環境
 
-### OS
+推奨プレイ環境は、**macOS 版のゲームを Mac で起動し、同じローカルネットワーク上で動作する LM Studio の OpenAI-compatible API に接続する構成**です。
 
-- Windows 10 / Windows 11
+Windows 版でプレイし、LM Studio を同じ PC の localhost として動かす構成でも動作します。
+ただし、相対的にテストは不十分であり、ゲーム体験は若干劣ります。
 
-### GPU / VRAM
+## ダウンロードと起動
 
-- NVIDIA GPU 推奨
-- **VRAM 24GB 以上が必要**
-- RTX 3090 / RTX 4090 クラスを想定
+GitHub Releases の Assets から、使用する OS に合った配布ファイルをダウンロードしてください。
 
-24GB 未満の VRAM では、想定モデルとコンテキスト長での動作は現実的ではありません。
+### macOS 版
 
-### LM Studio
+macOS 版は `.dmg` として配布されています。
+現在の macOS 版は **Apple Silicon Mac 向け**です。
 
-- LM Studio をインストールしてください
-- Local Server / OpenAI-compatible API を有効にしてください
-- API の URL は通常 `http://127.0.0.1:1234/v1` を使用します
+1. `.dmg` をダウンロードして開く
+2. 中の `.app` を `Applications` フォルダにドラッグする
+3. `Applications` フォルダからアプリを起動する
 
-## LM Studio の必須設定
+`.dmg` を開いただけでは、アプリは `Applications` フォルダに登録されません。
 
-本作では、次の設定を前提にしています。
+### Windows 版
 
-| 項目 | 指定 |
+Windows 版は `.exe` インストーラーとして配布されています。
+Assets から Windows 用インストーラーをダウンロードして実行してください。
+
+Windows SmartScreen やブラウザが警告を表示することがあります。
+警告が出る場合は、配布元、ファイル名、チェックサム、リリースノートを確認してから実行してください。
+
+## 初回起動後の LM Studio 接続設定
+
+ゲーム起動後、まず最初に設定ボタンから LM Studio への接続設定を完了させてください。
+
+接続先ホストを正しく設定し、「モデル一覧を取得」ボタンからモデル名が取得できれば接続は確立されています。
+適切なモデルを選択し、保存ボタンを押してください。
+
+保存ボタンが枠外にあるなど、レイアウト崩れが生じている場合は、この画面で適切な位置に収まるよう、ツールバーから Zoom in もしくは Zoom out を行うことを推奨します。
+
+### 接続先 URL について
+
+LM Studio をゲームと同じ PC / Mac で動かす場合は、通常は次の URL を使います。
+
+```text
+http://127.0.0.1:1234/v1
+```
+
+推奨構成のように、ゲームを Mac で起動し、LM Studio を同じローカルネットワーク上の別マシンで動かす場合は、`127.0.0.1` ではなく LM Studio が動いているマシンの LAN 内 IP アドレスを使います。
+
+例:
+
+```text
+http://192.168.x.x:1234/v1
+```
+
+LM Studio 側では Local Server / OpenAI-compatible API を有効にしてください。
+ファイアウォールやセキュリティソフトが LAN 内通信を妨げている場合、ゲーム側から接続できません。
+
+## LLM と VRAM について
+
+本作は、**Gemma 4 31B 系モデル**を前提にしたゲームです。
+
+Gemma 4 31B 系モデルを長いコンテキストで動かすため、4bit 水準での量子化なしでは動作は厳しいです。
+作者の手元では VRAM 24GB の GPU を使用しているため、24GB 環境で動かすための設定として、次の LM Studio 設定を想定しています。
+
+| 項目 | VRAM 24GB 環境での想定設定 |
 |---|---|
-| 推奨モデル | `lmstudio-community` の Gemma 4 31B `q4_k_m` |
-| ゲーム側モデル名 | 例: `gemma-4-31b-it` |
+| モデル | `lmstudio-community` の Gemma 4 31B `q4_k_m` |
+| ゲーム側モデル名 | 例: `lmstudio-community/gemma-4-31b-it` |
 | コンテキストサイズ | `64000` |
 | 評価バッチサイズ | `2048` |
+| KV Cache Quantization | 4bit 量子化が必要 |
 | Max Concurrent Predictions | `1` |
 | Unified KV Cache | 無効 |
-| KV Cache Quantization | RTX 3090 / 4090 では 4bit 量子化が必須 |
 | API 形式 | OpenAI-compatible API |
-| API URL | `http://127.0.0.1:1234/v1` |
+| API URL | `http://127.0.0.1:1234/v1` または LAN 内の LM Studio API URL |
 
-### RTX 3090 / RTX 4090 での注意
+この設定は、VRAM 24GB 環境で動かすための設定です。
+より大容量の VRAM がある GPU では、24GB 向けの制約をそのまま使う必要はないはずです。
 
-RTX 3090 / RTX 4090 の 24GB VRAM で動かす場合、推奨モデルは **`lmstudio-community` の Gemma 4 31B `q4_k_m`** です。
-この構成では、**KV キャッシュの 4bit 量子化が必須**です。
+特に、KV キャッシュ量子化は使わないほうが性能面で有利になるとされています。
+VRAM に余裕がある場合は、Max Concurrent Predictions や Unified KV Cache についても、より緩い設定にできるかもしれません。
 
-4bit 量子化を使わずにコンテキストサイズ `64000` で動かそうとすると、VRAM が不足してモデルのロードや会話生成に失敗する可能性が高いです。
+ただし、作者は現時点で VRAM 24GB 環境のみを使用しているため、より大容量の VRAM 環境での最適設定は未検証です。
 
-評価バッチサイズは `2048` にしてください。
-
-また、複数の予測を同時実行すると VRAM 使用量や応答の安定性に影響するため、**Max Concurrent Predictions は `1` にしてください**。
-
-Unified KV Cache は、このゲームの想定設定では **無効** にしてください。
-
-## ゲーム側の LM Studio 設定
+## 開発 repo から実行する場合の設定ファイル
 
 開発 repo から実行する場合、設定例は次のファイルにあります。
 
@@ -87,40 +123,19 @@ app/config/lmstudio.json
 {
   "provider": "lmstudio",
   "base_url": "http://127.0.0.1:1234/v1",
-  "chat_model": "gemma-4-31b-it",
-  "reflection_model": "gemma-4-31b-it",
+  "chat_model": "lmstudio-community/gemma-4-31b-it",
+  "reflection_model": "lmstudio-community/gemma-4-31b-it",
   "timeout_ms": 120000,
   "stream": true,
   "mock_provider_enabled": true
 }
 ```
 
-配布版では、ゲーム内の設定画面から LM Studio 接続設定を保存できる場合があります。
+`base_url` は、LM Studio を同じ PC / Mac で動かす場合の例です。
+ローカルネットワーク上の別マシンで LM Studio を動かす場合は、そのマシンの LAN 内 IP アドレスに変更してください。
+
+配布版では、ゲーム内の設定画面から LM Studio 接続設定を保存できます。
 ただし、LM Studio 側のモデルロード、コンテキストサイズ、KV キャッシュ設定は LM Studio 側で行う必要があります。
-
-## 起動前チェック
-
-ゲームを起動する前に、次を確認してください。
-
-1. LM Studio を起動している
-2. `lmstudio-community` の Gemma 4 31B `q4_k_m` をロードしている
-3. Context Size が `64000` になっている
-4. Evaluation Batch Size / 評価バッチサイズが `2048` になっている
-5. RTX 3090 / 4090 の場合、KV Cache Quantization が 4bit になっている
-6. Max Concurrent Predictions が `1` になっている
-7. Unified KV Cache が無効になっている
-8. Local Server / OpenAI-compatible API が起動している
-9. API URL が `http://127.0.0.1:1234/v1` になっている
-10. ゲーム側のモデル名が LM Studio 側のモデル名と一致している
-
-## Windows インストーラーについて
-
-Windows 版は NSIS 形式のインストーラーとして配布される場合があります。
-
-インストーラーが未署名の場合、Windows SmartScreen やブラウザが警告を表示することがあります。
-これは、配布元や署名の信頼情報がまだ蓄積されていないためです。
-
-警告が出る場合は、配布元、ファイル名、チェックサム、リリースノートを確認してから実行してください。
 
 ## トラブルシューティング
 
@@ -130,32 +145,39 @@ LM Studio が正しく起動していない可能性があります。
 
 確認してください。
 
-- LM Studio の Local Server が起動しているか
-- API URL が `http://127.0.0.1:1234/v1` か
+- LM Studio の Local Server / OpenAI-compatible API が起動しているか
+- ゲーム側の接続先 URL が正しいか
+- 別マシンの LM Studio に接続する場合、LAN 内 IP アドレスを使っているか
 - ゲーム側の `chat_model` / `reflection_model` が LM Studio 側のモデル名と一致しているか
+- モデル一覧を取得できるか
 - モデルがロード完了しているか
 - VRAM が不足していないか
 
 ### モデルロードに失敗する / 生成が極端に遅い
 
-VRAM または KV キャッシュ設定が原因の可能性があります。
+VRAM または LM Studio 側の量子化・コンテキスト設定が原因の可能性があります。
 
-- VRAM 24GB 以上の GPU を使っているか
+VRAM 24GB 環境では、次を確認してください。
+
 - `lmstudio-community` の Gemma 4 31B `q4_k_m` を使っているか
 - Context Size が `64000` か
 - Evaluation Batch Size / 評価バッチサイズが `2048` か
-- RTX 3090 / 4090 では KV Cache Quantization が 4bit か
+- KV Cache Quantization が 4bit か
 - Max Concurrent Predictions が `1` か
 - Unified KV Cache が無効か
 
+より大容量の VRAM がある環境では、24GB 向けの制約をそのまま使わないほうがよい場合があります。
+ただし、このリリースでは作者の手元で未検証です。
+
 ### API 接続エラーが出る
 
-LM Studio の Local Server 設定を確認してください。
+LM Studio の Local Server 設定とネットワーク設定を確認してください。
 
 - OpenAI-compatible API が有効か
 - ポートが `1234` か
-- `http://127.0.0.1:1234/v1` にアクセスできるか
-- セキュリティソフトやファイアウォールが localhost 通信を妨げていないか
+- 同じ PC / Mac で動かす場合、`http://127.0.0.1:1234/v1` にアクセスできるか
+- 別マシンで動かす場合、`http://<LAN内IP>:1234/v1` にアクセスできるか
+- セキュリティソフトやファイアウォールが localhost / LAN 内通信を妨げていないか
 
 ## 生成AI素材について
 
@@ -181,5 +203,5 @@ LM Studio の Local Server 設定を確認してください。
 - 日本語専用です
 - LM Studio と高性能 GPU が必要です
 - ローカル LLM の設定に強く依存します
-- 未署名インストーラーでは Windows の警告が出る場合があります
+- 会話生成、進行、セーブデータ、表示まわりに不安定な部分が残っている可能性があります
 - 仕様やセーブデータ形式は今後変わる可能性があります
