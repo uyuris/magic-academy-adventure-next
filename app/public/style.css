@@ -93,6 +93,10 @@ body.slot-load-screen-active {
   overflow: hidden;
 }
 
+body.settings-screen-active {
+  overflow: hidden;
+}
+
 body.title-screen-active .layout {
   width: 100%;
   max-width: none;
@@ -301,7 +305,7 @@ body:has(#academy-room-screen.active) .layout {
 
 body:has(#settings-screen.active) .layout {
   box-sizing: border-box;
-  height: calc(100dvh - var(--runtime-topbar-height, 88px));
+  height: 100dvh;
   max-width: none;
   min-height: 0;
   padding: 12px 20px 8px;
@@ -333,6 +337,7 @@ body:has(#shop-screen.active) .layout {
 
 .settings-screen-shell {
   height: 100%;
+  min-height: 0;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 16px;
 }
@@ -363,6 +368,10 @@ body:has(#shop-screen.active) .layout {
   display: grid;
   gap: 18px;
   align-content: start;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
 }
 
 .settings-card-heading {
@@ -370,9 +379,11 @@ body:has(#shop-screen.active) .layout {
 }
 
 .settings-inline-status,
-.settings-base-url {
+.settings-base-url,
+.settings-model-status {
   margin: 0;
   color: rgba(255, 248, 230, 0.78);
+  overflow-wrap: anywhere;
 }
 
 .settings-form {
@@ -405,6 +416,12 @@ body:has(#shop-screen.active) .layout {
   display: grid;
   grid-template-columns: minmax(260px, 1fr) minmax(150px, 220px);
   gap: 14px;
+}
+
+@media (max-width: 760px) {
+  .settings-field-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .settings-field input {
