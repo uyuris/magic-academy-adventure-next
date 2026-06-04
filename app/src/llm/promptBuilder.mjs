@@ -85,7 +85,8 @@ export function buildCharacterPromptPrefix({ profile, scene, memories = [], skil
   const schoolYear = profile.school_year ?? '生徒';
   const club = profile.club ?? '所属未設定';
 
-  const memoryText = bulletList(memories, (memory) => `${memory.text}${memory.work_record_id ? `\n  work_record_id: ${memory.work_record_id}` : ''}${memory.tags?.length ? `\n  tags: ${memory.tags.join(', ')}` : ''}`, '初対面');
+  const memoryEmptyLabel = workRecords.length === 0 ? '初対面' : 'なし';
+  const memoryText = bulletList(memories, (memory) => `${memory.text}${memory.work_record_id ? `\n  work_record_id: ${memory.work_record_id}` : ''}${memory.tags?.length ? `\n  tags: ${memory.tags.join(', ')}` : ''}`, memoryEmptyLabel);
   const skillText = bulletList(skills, (skill) => `${skill.name}: ${skill.description}${skill.work_record_id ? `\n  work_record_id: ${skill.work_record_id}` : ''}`);
   const workRecordText = bulletList(workRecords, (record) => `${record.title}\n  ${record.body}${record.tags?.length ? `\n  tags: ${record.tags.join(', ')}` : ''}`);
   const conversationText = currentConversation.length === 0 ? '- なし' : currentConversation.map((message) => renderConversationLine(profile, message)).join('\n');

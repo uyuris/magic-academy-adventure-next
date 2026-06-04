@@ -248,6 +248,20 @@ test('buildCharacterPrompt marks empty character memory as first meeting instead
   assert.doesNotMatch(prompt, /この場で参照する記憶:\n- なし/);
 });
 
+test('buildCharacterPrompt does not mark empty prompt memory as first meeting when work records exist', () => {
+  const prompt = buildCharacterPrompt({
+    profile: { display_name: 'リナ・クラウゼ', school_year: '2年生', club: '薬草学研究会' },
+    scene: { academy_name: '星灯魔法学院', location_name: '放課後の薬草園' },
+    memories: [],
+    workRecords: [{ id: 'wr_conv_first_001', title: '初回会話の記録', body: '主人公と一度話した記録。' }],
+    playerInput: '続きから話そう'
+  });
+
+  assert.match(prompt, /この場で参照する記憶:\n- なし/);
+  assert.doesNotMatch(prompt, /この場で参照する記憶:\n- 初対面/);
+  assert.match(prompt, /この場で参照する過去の記録:\n- 初回会話の記録/);
+});
+
 test('buildCharacterPrompt treats no character-known memory as first meeting', () => {
   const prompt = buildCharacterPrompt({
     profile: { display_name: 'リナ・クラウゼ', school_year: '2年生', club: '薬草学研究会' },
