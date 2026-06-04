@@ -185,7 +185,7 @@ test('server conversation endpoint uses LM Studio for assistant response and fin
   assert.equal(lm.requests[0].response_format.json_schema.name, 'character_emotion_choice');
   assert.equal(lm.requests[1].model, 'chat-model');
   assert.match(lm.requests[2].messages[0].content, /会話を継続したいと思うか/);
-  assert.deepEqual(lm.requests.map((request) => request.reasoning), Array.from({ length: lm.requests.length }, () => 'medium'));
+  assert.deepEqual(lm.requests.map((request) => request.reasoning_effort), Array.from({ length: lm.requests.length }, () => 'medium'));
 
   const endResponse = await fetch(`${base}/api/conversation/end`, {
     method: 'POST',
@@ -272,7 +272,7 @@ test('server conversation endpoint uses LM Studio for assistant response and fin
   assert.match(destinationStageRequest.messages[0].content, /今度行く、来週行くなど、将来その場所へ一緒に行く予定について具体的に合意して会話が終わった場合も、向かう場所への合意が成立したものとして扱う/);
   assert.match(destinationStageRequest.messages[0].content, /返答は対応表にあるlocation_idを1つだけ返す/);
   assert.match(destinationStageRequest.messages[0].content, /移動可能な移動先の名称とlocation_idの対応表/);
-  assert.deepEqual(lm.requests.map((request) => request.reasoning), Array.from({ length: lm.requests.length }, () => 'medium'));
+  assert.deepEqual(lm.requests.map((request) => request.reasoning_effort), Array.from({ length: lm.requests.length }, () => 'medium'));
 });
 
 function parseSse(text) {
@@ -314,7 +314,7 @@ test('server streaming conversation endpoint relays immediate assistant deltas b
   assert.equal(lm.requests.length, 3, 'streaming chat turn should choose emotion, stream the immediate LM Studio chat reply to the browser, then judge continuation; work-record recall is skipped when no linked candidate exists');
   assert.equal(lm.requests[0].response_format.json_schema.name, 'character_emotion_choice');
   assert.equal(lm.requests[1].stream, true);
-  assert.equal(lm.requests[1].reasoning, 'off');
+  assert.equal(lm.requests[1].reasoning_effort, 'none');
   assert.match(lm.requests[2].messages[0].content, /会話を継続したいと思うか/);
 
   const endResponse = await fetch(`${base}/api/conversation/end`, {
@@ -386,7 +386,7 @@ test('server streaming conversation endpoint relays immediate assistant deltas b
   assert.match(destinationStageRequest.messages[0].content, /今度行く、来週行くなど、将来その場所へ一緒に行く予定について具体的に合意して会話が終わった場合も、向かう場所への合意が成立したものとして扱う/);
   assert.match(destinationStageRequest.messages[0].content, /返答は対応表にあるlocation_idを1つだけ返す/);
   assert.match(destinationStageRequest.messages[0].content, /移動可能な移動先の名称とlocation_idの対応表/);
-  assert.deepEqual(lm.requests.map((request) => request.reasoning), Array.from({ length: lm.requests.length }, () => 'off'));
+  assert.deepEqual(lm.requests.map((request) => request.reasoning_effort), Array.from({ length: lm.requests.length }, () => 'none'));
 });
 
 test('server streaming opening endpoint relays LM Studio assistant deltas before final result', async (t) => {
@@ -412,7 +412,7 @@ test('server streaming opening endpoint relays LM Studio assistant deltas before
   assert.equal(events[resultIndex].data.conversation.messages[0].content, 'LM Studio stream');
   assert.equal(lm.requests.length, 1, 'opening should only call LM Studio chat once and not run emotion/recall/prewarm');
   assert.equal(lm.requests[0].stream, true);
-  assert.equal(lm.requests[0].reasoning, 'low');
+  assert.equal(lm.requests[0].reasoning_effort, 'low');
 });
 
 test('server streaming opening emits structured config-required SSE errors when LM Studio config is unavailable', async (t) => {

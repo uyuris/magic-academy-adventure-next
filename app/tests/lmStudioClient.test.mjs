@@ -36,7 +36,8 @@ test('callLmStudioChat posts OpenAI-compatible chat completion and returns assis
   assert.equal(requests[0].body.model, 'gemma-4-31b');
   assert.deepEqual(requests[0].body.messages, [{ role: 'user', content: '星灯魔法学院のリナとして返答する。' }]);
   assert.equal(requests[0].body.stream, false);
-  assert.equal(requests[0].body.reasoning, 'off');
+  assert.equal(requests[0].body.reasoning, undefined);
+  assert.equal(requests[0].body.reasoning_effort, 'none');
 });
 
 test('callLmStudioChat can accumulate streamed OpenAI-compatible SSE deltas', async (t) => {
@@ -54,7 +55,7 @@ test('callLmStudioChat can accumulate streamed OpenAI-compatible SSE deltas', as
 
   assert.equal(text, '……はい、調べましょう。');
   assert.equal(requests[0].body.stream, true);
-  assert.equal(requests[0].body.reasoning, 'off');
+  assert.equal(requests[0].body.reasoning_effort, 'none');
 });
 
 test('loadLmStudioConfig defaults missing stream to true', async (t) => {
@@ -183,7 +184,8 @@ test('callLmStudioStructuredJson requests the supplied json_schema and parses ob
 
   assert.deepEqual(parsed, memoryUpdate);
   assert.equal(requests[0].body.model, 'gemma-4-31b-it');
-  assert.equal(requests[0].body.reasoning, 'low');
+  assert.equal(requests[0].body.reasoning, undefined);
+  assert.equal(requests[0].body.reasoning_effort, 'low');
   assert.equal(requests[0].body.response_format.type, 'json_schema');
   assert.equal(requests[0].body.response_format.json_schema.name, 'memory_update_record');
   assert.deepEqual(requests[0].body.response_format.json_schema.schema.required, ['memory_record']);
@@ -253,7 +255,7 @@ test('createLmStudioProviders returns chat and separate continuity update provid
     null,
     null
   ]);
-  assert.deepEqual(requests.map((request) => request.body.reasoning), Array.from({ length: requests.length }, () => 'high'));
+  assert.deepEqual(requests.map((request) => request.body.reasoning_effort), Array.from({ length: requests.length }, () => 'high'));
   assert.match(requests[1].body.messages[0].content, /cache-friendly shared character prompt/);
   assert.doesNotMatch(requests[1].body.messages[0].content, /次のプレイヤー入力を受け取った直後のリナ・クラウゼの感情/);
   assert.match(requests[2].body.messages[0].content, /この発言を行ったプレイヤーとの会話を継続したいと思うか/);

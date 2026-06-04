@@ -21,8 +21,8 @@ export function normalizeLmStudioThinkingEffort(value) {
   return allowedThinkingEfforts.has(value) ? value : null;
 }
 
-function reasoningForLmStudioConfig(config = {}) {
-  return normalizeLmStudioThinkingEffort(config.thinking_effort) ?? 'off';
+function reasoningEffortForLmStudioConfig(config = {}) {
+  return normalizeLmStudioThinkingEffort(config.thinking_effort) ?? 'none';
 }
 
 function lmStudioConfigRequiredError() {
@@ -232,7 +232,7 @@ async function postChatCompletion({ config, model, messages, stream = false, res
           model: modelId,
           messages,
           stream,
-          reasoning: reasoningForLmStudioConfig(config),
+          reasoning_effort: reasoningEffortForLmStudioConfig(config),
           ...(responseFormat ? { response_format: responseFormat } : {})
         })
       });
