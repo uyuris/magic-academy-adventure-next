@@ -93,7 +93,7 @@ async function bootElectronRuntime() {
 async function launch() {
   try {
     const started = await bootElectronRuntime();
-    console.log(`Magic Academy Adventure Next Electron runtime listening on ${started.url}`);
+    console.log(`STARFALL MAGIC ACADEMY Electron runtime listening on ${started.url}`);
     if (isSmokeMode()) {
       app.quit();
       return;
@@ -102,7 +102,7 @@ async function launch() {
     mainWindow = createMainWindow(mainWindowEntryUrl);
   } catch (error) {
     console.error(error);
-    dialog.showErrorBox('Magic Academy Adventure Next を起動できません', error?.message ?? String(error));
+    dialog.showErrorBox('STARFALL MAGIC ACADEMY を起動できません', error?.message ?? String(error));
     await stopRuntimeServer();
     app.exit(1);
   }

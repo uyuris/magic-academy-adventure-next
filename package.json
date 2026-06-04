@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "type": "module",
   "main": "electron/main.mjs",
-  "description": "Local-first browser and Electron runtime for the Magic Academy Adventure Next playable development project.",
+  "description": "Local-first browser and Electron runtime for the STARFALL MAGIC ACADEMY playable development project.",
   "scripts": {
     "test": "node --test app/tests/*.test.mjs",
     "check": "node --check electron/main.mjs && node --check app/src/*.mjs && node --check app/src/llm/*.mjs && node --check app/src/electron/*.mjs && node --check app/src/server/*.mjs && node --check app/public/app.js",
@@ -26,7 +26,7 @@
   },
   "build": {
     "appId": "com.uyuris.magic-academy-adventure-next",
-    "productName": "Magic Academy Adventure Next",
+    "productName": "STARFALL MAGIC ACADEMY",
     "asar": true,
     "icon": "assets/app-icons/sera-neutral.icns",
     "files": [

@@ -271,7 +271,7 @@ export async function startServer(options = {}) {
   const startedHost = typeof address === 'object' && address?.address ? address.address : host;
   const startedPort = typeof address === 'object' && address?.port ? address.port : port;
   if (options.silent !== true) {
-    console.log(`Magic Academy Adventure Next runtime listening on http://${startedHost}:${startedPort}`);
+    console.log(`STARFALL MAGIC ACADEMY runtime listening on http://${startedHost}:${startedPort}`);
     if (!lmStudioConfig) {
       console.log(`LM Studio config not found at ${configPath}; browser shell and settings surface are available, but conversation features will require saving LM Studio settings first.`);
     }

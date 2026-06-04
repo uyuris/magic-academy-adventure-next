@@ -28,7 +28,7 @@ test('startServer starts on localhost without an LM Studio config file', async (
   const response = await fetch(started.url);
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /Magic Academy Adventure Next|<html/i);
+  assert.match(html, /STARFALL MAGIC ACADEMY|<html/i);
 
   const settingsResponse = await fetch(`${started.url}/api/settings/lmstudio`);
   assert.equal(settingsResponse.status, 200);

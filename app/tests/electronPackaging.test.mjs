@@ -16,13 +16,20 @@ test('normal browser startup stays on academy map while packaged startup can req
   assert.match(js, /Promise\.all\(\[[\s\S]*refreshSaveSlots\(\),[\s\S]*refresh\(\)[\s\S]*\]\)\.then\(\(\)\s*=>\s*applyInitialScreenOverride\(\)\)/, 'startup override should apply only after the normal refresh boot completes');
 });
 
-test('electron packaging declares a real app icon and centralizes packaged title entry policy for launch and activate', async () => {
+test('electron packaging declares a real app icon, app display name, and centralized packaged title entry policy', async () => {
+  const appDisplayName = 'STARFALL MAGIC ACADEMY';
   const packageJson = JSON.parse(await readFile(path.join(projectRoot, 'package.json'), 'utf8'));
+  const publicHtml = await readFile(path.join(runtimePublicReferenceRoot, 'index.html'), 'utf8');
   const electronMain = await readFile(path.join(projectRoot, 'electron/main.mjs'), 'utf8');
   const windowLifecycle = await readFile(path.join(projectRoot, 'app/src/electron/windowLifecycle.mjs'), 'utf8');
   const windowsTargets = packageJson.build?.win?.target ?? [];
   const nsisTarget = windowsTargets.find((target) => target?.target === 'nsis');
 
+  assert.equal(packageJson.build?.productName, appDisplayName, 'packaged app bundle should use the approved STARFALL MAGIC ACADEMY display name');
+  assert.match(publicHtml, /<title>STARFALL MAGIC ACADEMY<\/title>/, 'browser document title should use the app display name');
+  assert.match(publicHtml, /<h1>STARFALL MAGIC ACADEMY<\/h1>/, 'top-level browser heading should use the app display name');
+  assert.match(electronMain, /STARFALL MAGIC ACADEMY Electron runtime listening/, 'Electron smoke log should identify the app display name');
+  assert.match(electronMain, /STARFALL MAGIC ACADEMY を起動できません/, 'Electron startup error dialog should identify the app display name');
   assert.equal(packageJson.build?.icon, 'assets/app-icons/sera-neutral.icns', 'packaging should declare the generated Sera-neutral icns file as the app icon');
   assert.equal(packageJson.scripts?.['electron:mac'], 'electron-builder --mac dmg zip', 'package scripts should expose a dedicated macOS packaging command');
   assert.equal(packageJson.scripts?.['electron:win'], 'electron-builder --win nsis --x64', 'package scripts should expose a dedicated Windows packaging command');
