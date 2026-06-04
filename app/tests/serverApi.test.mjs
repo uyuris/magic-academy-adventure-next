@@ -263,6 +263,25 @@ test('initialScreen=title serves title-active initial HTML while preserving defa
   assert.match(titleHtml, /<button data-screen="academy-map">学院マップ<\/button>/, 'packaged title entry should remove the academy-map tab active marker');
 });
 
+test('settings screen exposes LM Studio thinking effort selector with None as the disabling choice', async (t) => {
+  const { base } = await withServer(t);
+
+  const response = await fetch(`${base}/`);
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<select id="lmstudio-thinking-effort">/);
+  assert.match(html, /<option value="none">None<\/option>/);
+  assert.match(html, /<option value="low">Low<\/option>/);
+  assert.match(html, /<option value="medium">Medium<\/option>/);
+  assert.match(html, /<option value="high">High<\/option>/);
+  assert.match(html, /None を選ぶと、LM Studio へのリクエストでシンキングを無効化します。/);
+
+  const appJs = await fetch(`${base}/app.js`).then((jsResponse) => jsResponse.text());
+  assert.match(appJs, /lmstudio-thinking-effort/);
+  assert.match(appJs, /thinking_effort/);
+  assert.match(appJs, /value\s*===\s*['"]none['"]/);
+});
+
 test('root public shell serves from app/public while generated compatibility assets resolve from canonical roots', async (t) => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'magic-adv-public-root-'));
   const publicRoot = path.join(root, 'public');
@@ -571,6 +590,8 @@ test('LM Studio settings API normalizes localhost/lan editing, persists config, 
   assert.equal(initial.model, 'gemma-4-31b-it');
   assert.equal(initial.chat_model, 'gemma-4-31b-it');
   assert.equal(initial.reflection_model, 'gemma-4-31b-it');
+  assert.equal(initial.thinking_effort, null);
+  assert.equal(liveLmStudioConfig.thinking_effort, null, 'GET should normalize the live config object used by the running server');
 
   const discoveredModels = await jsonFetch(`${base}/api/settings/lmstudio/models`, {
     method: 'POST',
@@ -584,7 +605,7 @@ test('LM Studio settings API normalizes localhost/lan editing, persists config, 
 
   const updatedLan = await jsonFetch(`${base}/api/settings/lmstudio`, {
     method: 'PATCH',
-    body: { connection_mode: 'lan', host: '192.168.11.3', port: 2244, model: 'qwen3-32b' }
+    body: { connection_mode: 'lan', host: '192.168.11.3', port: 2244, model: 'qwen3-32b', thinking_effort: 'low' }
   });
   assert.equal(updatedLan.connection_mode, 'lan');
   assert.equal(updatedLan.host, '192.168.11.3');
@@ -593,23 +614,27 @@ test('LM Studio settings API normalizes localhost/lan editing, persists config, 
   assert.equal(updatedLan.model, 'qwen3-32b');
   assert.equal(updatedLan.chat_model, 'qwen3-32b');
   assert.equal(updatedLan.reflection_model, 'qwen3-32b');
+  assert.equal(updatedLan.thinking_effort, 'low');
   assert.equal(liveLmStudioConfig.base_url, 'http://192.168.11.3:2244/v1', 'PATCH should update the live config object used by the running server');
   assert.equal(liveLmStudioConfig.chat_model, 'qwen3-32b', 'PATCH should update the live chat model');
   assert.equal(liveLmStudioConfig.reflection_model, 'qwen3-32b', 'PATCH should update the live reflection model');
+  assert.equal(liveLmStudioConfig.thinking_effort, 'low', 'PATCH should update the live thinking effort');
   const persistedLan = JSON.parse(await fs.readFile(configPath, 'utf8'));
   assert.equal(persistedLan.base_url, 'http://192.168.11.3:2244/v1');
   assert.equal(persistedLan.chat_model, 'qwen3-32b', 'selected model should be persisted as chat_model');
   assert.equal(persistedLan.reflection_model, 'qwen3-32b', 'selected model should be persisted as reflection_model');
+  assert.equal(persistedLan.thinking_effort, 'low', 'selected thinking effort should be persisted');
 
   const updatedLocalhost = await jsonFetch(`${base}/api/settings/lmstudio`, {
     method: 'PATCH',
-    body: { connection_mode: 'localhost', host: 'ignored.example', port: 1235, model: 'gemma-4-27b-it' }
+    body: { connection_mode: 'localhost', host: 'ignored.example', port: 1235, model: 'gemma-4-27b-it', thinking_effort: null }
   });
   assert.equal(updatedLocalhost.connection_mode, 'localhost');
   assert.equal(updatedLocalhost.host, '127.0.0.1');
   assert.equal(updatedLocalhost.port, 1235);
   assert.equal(updatedLocalhost.base_url, 'http://127.0.0.1:1235/v1');
   assert.equal(updatedLocalhost.model, 'gemma-4-27b-it');
+  assert.equal(updatedLocalhost.thinking_effort, null);
 
   const invalidPortResponse = await fetch(`${base}/api/settings/lmstudio`, {
     method: 'PATCH',
@@ -637,6 +662,15 @@ test('LM Studio settings API normalizes localhost/lan editing, persists config, 
   assert.equal(missingModelResponse.status, 400);
   const missingModelBody = JSON.parse(await missingModelResponse.text());
   assert.match(missingModelBody.error, /model/i);
+
+  const invalidThinkingEffortResponse = await fetch(`${base}/api/settings/lmstudio`, {
+    method: 'PATCH',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ connection_mode: 'localhost', port: 1234, model: 'qwen3-32b', thinking_effort: 'ultra' })
+  });
+  assert.equal(invalidThinkingEffortResponse.status, 400);
+  const invalidThinkingEffortBody = JSON.parse(await invalidThinkingEffortResponse.text());
+  assert.match(invalidThinkingEffortBody.error, /thinking_effort/i);
 });
 
 test('LM Studio settings API lazy-loads config from lmStudioConfigPath when the server entrypoint does not preload it', async (t) => {
@@ -674,19 +708,22 @@ test('LM Studio settings API lazy-loads config from lmStudioConfigPath when the 
   const initial = await jsonFetch(`${base}/api/settings/lmstudio`);
   assert.equal(initial.base_url, 'http://127.0.0.1:1234/v1');
   assert.equal(initial.model, 'gemma-4-31b-it');
+  assert.equal(initial.thinking_effort, null);
 
   const updated = await jsonFetch(`${base}/api/settings/lmstudio`, {
     method: 'PATCH',
-    body: { connection_mode: 'lan', host: '192.168.11.3', port: 2244, model: 'qwen3-32b' }
+    body: { connection_mode: 'lan', host: '192.168.11.3', port: 2244, model: 'qwen3-32b', thinking_effort: 'high' }
   });
   assert.equal(updated.connection_mode, 'lan');
   assert.equal(updated.base_url, 'http://192.168.11.3:2244/v1');
   assert.equal(updated.model, 'qwen3-32b');
+  assert.equal(updated.thinking_effort, 'high');
 
   const persisted = JSON.parse(await fs.readFile(configPath, 'utf8'));
   assert.equal(persisted.base_url, 'http://192.168.11.3:2244/v1');
   assert.equal(persisted.chat_model, 'qwen3-32b');
   assert.equal(persisted.reflection_model, 'qwen3-32b');
+  assert.equal(persisted.thinking_effort, 'high');
 });
 
 test('conversation opening returns a structured connection-unavailable error when LM Studio config lazy-loads but the API is unreachable', async (t) => {

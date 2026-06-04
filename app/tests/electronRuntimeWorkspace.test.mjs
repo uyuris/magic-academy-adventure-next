@@ -110,6 +110,7 @@ test('ensureElectronRuntimeWorkspace materializes writable desktop roots without
 
   const lmStudioConfig = JSON.parse(await fs.readFile(workspace.lmStudioConfigPath, 'utf8'));
   assert.equal(lmStudioConfig.stream, true);
+  assert.equal(lmStudioConfig.thinking_effort, null);
 
   assert.equal(await pathExists(path.join(workspace.projectRoot, 'data/definitions')), false);
   assert.equal(await pathExists(path.join(workspace.projectRoot, 'data/seeds')), false);
@@ -157,6 +158,41 @@ test('ensureElectronRuntimeWorkspace repairs an existing lmstudio.json that is m
   const workspace = await ensureElectronRuntimeWorkspace({ resourceRoot, userDataRoot });
   const lmStudioConfig = JSON.parse(await fs.readFile(workspace.lmStudioConfigPath, 'utf8'));
   assert.equal(lmStudioConfig.stream, true);
+  assert.equal(lmStudioConfig.thinking_effort, null);
+  assert.equal(lmStudioConfig.base_url, 'http://192.168.11.3:1234/v1');
+});
+
+test('ensureElectronRuntimeWorkspace preserves explicit stream false while repairing missing thinking effort', async (t) => {
+  const resourceRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'magic-adv-electron-resources-'));
+  const userDataRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'magic-adv-electron-userdata-'));
+  t.after(async () => {
+    await fs.rm(resourceRoot, { recursive: true, force: true });
+    await fs.rm(userDataRoot, { recursive: true, force: true });
+  });
+
+  await writeJson(resourceRoot, 'app/config/lmstudio.example.json', {
+    provider: 'lmstudio',
+    base_url: 'http://127.0.0.1:1234/v1',
+    chat_model: 'gemma-4-31b-it',
+    reflection_model: 'gemma-4-31b-it',
+    timeout_ms: 120000,
+    stream: true,
+    thinking_effort: null,
+    mock_provider_enabled: true
+  });
+  await fs.mkdir(path.join(userDataRoot, 'runtime-project/app/config'), { recursive: true });
+  await fs.writeFile(path.join(userDataRoot, 'runtime-project/app/config/lmstudio.json'), `${JSON.stringify({
+    provider: 'lmstudio',
+    base_url: 'http://192.168.11.3:1234/v1',
+    chat_model: 'lmstudio-community/gemma-4-31b-it',
+    reflection_model: 'lmstudio-community/gemma-4-31b-it',
+    stream: false
+  }, null, 2)}\n`, 'utf8');
+
+  const workspace = await ensureElectronRuntimeWorkspace({ resourceRoot, userDataRoot });
+  const lmStudioConfig = JSON.parse(await fs.readFile(workspace.lmStudioConfigPath, 'utf8'));
+  assert.equal(lmStudioConfig.stream, false);
+  assert.equal(lmStudioConfig.thinking_effort, null);
   assert.equal(lmStudioConfig.base_url, 'http://192.168.11.3:1234/v1');
 });
 

@@ -36,10 +36,11 @@ test('callLmStudioChat posts OpenAI-compatible chat completion and returns assis
   assert.equal(requests[0].body.model, 'gemma-4-31b');
   assert.deepEqual(requests[0].body.messages, [{ role: 'user', content: '星灯魔法学院のリナとして返答する。' }]);
   assert.equal(requests[0].body.stream, false);
+  assert.equal(requests[0].body.reasoning, 'off');
 });
 
 test('callLmStudioChat can accumulate streamed OpenAI-compatible SSE deltas', async (t) => {
-  const { baseUrl } = await withStubServer(t, async (_req, res) => {
+  const { baseUrl, requests } = await withStubServer(t, async (_req, res) => {
     res.writeHead(200, { 'content-type': 'text/event-stream' });
     res.write('data: {"choices":[{"delta":{"content":"……はい"}}]}\n\n');
     res.write('data: {"choices":[{"delta":{"content":"、調べましょう。"}}]}\n\n');
@@ -52,6 +53,8 @@ test('callLmStudioChat can accumulate streamed OpenAI-compatible SSE deltas', as
   });
 
   assert.equal(text, '……はい、調べましょう。');
+  assert.equal(requests[0].body.stream, true);
+  assert.equal(requests[0].body.reasoning, 'off');
 });
 
 test('loadLmStudioConfig defaults missing stream to true', async (t) => {
@@ -72,6 +75,54 @@ test('loadLmStudioConfig defaults missing stream to true', async (t) => {
 
   const loaded = await loadLmStudioConfig(configPath);
   assert.equal(loaded.stream, true);
+  assert.equal(loaded.thinking_effort, null);
+});
+
+test('loadLmStudioConfig preserves allowed thinking effort values and normalizes invalid values to None', async (t) => {
+  const { promises: fs } = await import('node:fs');
+  const os = await import('node:os');
+  const path = await import('node:path');
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'magic-adv-lmstudio-config-'));
+  t.after(async () => {
+    await fs.rm(root, { recursive: true, force: true });
+  });
+  const validConfigPath = path.join(root, 'lmstudio-valid.json');
+  const invalidConfigPath = path.join(root, 'lmstudio-invalid.json');
+  const uppercaseConfigPath = path.join(root, 'lmstudio-uppercase.json');
+  const spacedConfigPath = path.join(root, 'lmstudio-spaced.json');
+  await fs.writeFile(validConfigPath, `${JSON.stringify({
+    provider: 'lmstudio',
+    base_url: 'http://127.0.0.1:1234/v1',
+    chat_model: 'gemma-4-31b-it',
+    reflection_model: 'gemma-4-31b-it',
+    thinking_effort: 'high'
+  }, null, 2)}\n`, 'utf8');
+  await fs.writeFile(invalidConfigPath, `${JSON.stringify({
+    provider: 'lmstudio',
+    base_url: 'http://127.0.0.1:1234/v1',
+    chat_model: 'gemma-4-31b-it',
+    reflection_model: 'gemma-4-31b-it',
+    thinking_effort: 'ultra'
+  }, null, 2)}\n`, 'utf8');
+  await fs.writeFile(uppercaseConfigPath, `${JSON.stringify({
+    provider: 'lmstudio',
+    base_url: 'http://127.0.0.1:1234/v1',
+    chat_model: 'gemma-4-31b-it',
+    reflection_model: 'gemma-4-31b-it',
+    thinking_effort: 'LOW'
+  }, null, 2)}\n`, 'utf8');
+  await fs.writeFile(spacedConfigPath, `${JSON.stringify({
+    provider: 'lmstudio',
+    base_url: 'http://127.0.0.1:1234/v1',
+    chat_model: 'gemma-4-31b-it',
+    reflection_model: 'gemma-4-31b-it',
+    thinking_effort: ' low '
+  }, null, 2)}\n`, 'utf8');
+
+  assert.equal((await loadLmStudioConfig(validConfigPath)).thinking_effort, 'high');
+  assert.equal((await loadLmStudioConfig(invalidConfigPath)).thinking_effort, null);
+  assert.equal((await loadLmStudioConfig(uppercaseConfigPath)).thinking_effort, null);
+  assert.equal((await loadLmStudioConfig(spacedConfigPath)).thinking_effort, null);
 });
 
 test('loadLmStudioConfig preserves explicit stream false', async (t) => {
@@ -125,13 +176,14 @@ test('callLmStudioStructuredJson requests the supplied json_schema and parses ob
   });
 
   const parsed = await callLmStudioStructuredJson({
-    config: { base_url: baseUrl, reflection_model: 'gemma-4-31b-it', timeout_ms: 5000 },
+    config: { base_url: baseUrl, reflection_model: 'gemma-4-31b-it', timeout_ms: 5000, thinking_effort: 'low' },
     prompt: 'memory update prompt',
     responseFormat
   });
 
   assert.deepEqual(parsed, memoryUpdate);
   assert.equal(requests[0].body.model, 'gemma-4-31b-it');
+  assert.equal(requests[0].body.reasoning, 'low');
   assert.equal(requests[0].body.response_format.type, 'json_schema');
   assert.equal(requests[0].body.response_format.json_schema.name, 'memory_update_record');
   assert.deepEqual(requests[0].body.response_format.json_schema.schema.required, ['memory_record']);
@@ -165,7 +217,7 @@ test('createLmStudioProviders returns chat and separate continuity update provid
     res.end(JSON.stringify({ choices: [{ message: { content: contentBySchema[schemaName] } }] }));
   });
   const conversation = { id: 'conv_x', character_id: 'lina', location_id: 'herbology_garden', time_slot: 'after_school', source_type: 'field', messages: [] };
-  const providers = createLmStudioProviders({ config: { base_url: baseUrl, chat_model: 'chat-model', reflection_model: 'reflection-model', timeout_ms: 5000, stream: false } });
+  const providers = createLmStudioProviders({ config: { base_url: baseUrl, chat_model: 'chat-model', reflection_model: 'reflection-model', timeout_ms: 5000, stream: false, thinking_effort: 'high' } });
 
   assert.equal(await providers.chatProvider({ prompt: 'character prompt' }), 'LM Studio character line');
   const emotion = await providers.emotionProvider({ profile: { display_name: 'リナ・クラウゼ' }, playerInput: '棚札を見て', currentConversation: [], prompt: 'cache-friendly shared character prompt\nリナ・クラウゼとして、現在の場面に自然に続く感情を次から1つだけ選択する。' });
@@ -201,6 +253,7 @@ test('createLmStudioProviders returns chat and separate continuity update provid
     null,
     null
   ]);
+  assert.deepEqual(requests.map((request) => request.body.reasoning), Array.from({ length: requests.length }, () => 'high'));
   assert.match(requests[1].body.messages[0].content, /cache-friendly shared character prompt/);
   assert.doesNotMatch(requests[1].body.messages[0].content, /次のプレイヤー入力を受け取った直後のリナ・クラウゼの感情/);
   assert.match(requests[2].body.messages[0].content, /この発言を行ったプレイヤーとの会話を継続したいと思うか/);

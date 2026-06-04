@@ -604,6 +604,7 @@ function defaultLmStudioSettings() {
     reflection_model: '',
     timeout_ms: null,
     stream: false,
+    thinking_effort: null,
     provider: 'lmstudio',
     mock_provider_enabled: false
   };
@@ -618,6 +619,7 @@ function lmStudioSettingsElements() {
     port: document.querySelector('#lmstudio-port'),
     baseUrl: document.querySelector('#lmstudio-base-url'),
     model: document.querySelector('#lmstudio-model'),
+    thinkingEffort: document.querySelector('#lmstudio-thinking-effort'),
     modelStatus: document.querySelector('#lmstudio-model-status'),
     fetchModelsButton: document.querySelector('#fetch-lmstudio-models'),
     saveButton: document.querySelector('#save-lmstudio-settings')
@@ -630,6 +632,15 @@ function normalizeLmStudioHost(value) {
 
 function normalizeLmStudioModelValue(value) {
   return String(value ?? '').trim();
+}
+
+function normalizeLmStudioThinkingEffortSelectValue(value) {
+  return value === 'low' || value === 'medium' || value === 'high' ? value : 'none';
+}
+
+function lmStudioThinkingEffortFromSelectValue(value) {
+  if (value === 'none') return null;
+  return value === 'low' || value === 'medium' || value === 'high' ? value : null;
 }
 
 function buildLmStudioBaseUrl({ connectionMode, host, port }) {
@@ -715,12 +726,13 @@ function renderLmStudioModelOptions(settings = currentLmStudioSettings) {
 
 function renderLmStudioSettings(settings = currentLmStudioSettings ?? defaultLmStudioSettings()) {
   if (!settings) return;
-  const { localhost, lan, host, port } = lmStudioSettingsElements();
+  const { localhost, lan, host, port, thinkingEffort } = lmStudioSettingsElements();
   const connectionMode = settings.connection_mode === 'lan' ? 'lan' : 'localhost';
   if (localhost) localhost.checked = connectionMode === 'localhost';
   if (lan) lan.checked = connectionMode === 'lan';
   if (host) host.value = settings.host ?? '127.0.0.1';
   if (port) port.value = String(settings.port ?? 1234);
+  if (thinkingEffort) thinkingEffort.value = normalizeLmStudioThinkingEffortSelectValue(settings.thinking_effort);
   syncLmStudioConnectionModeUi();
   renderLmStudioModelOptions(settings);
   setLmStudioSettingsStatus(`現在: ${settings.base_url}`);
@@ -774,7 +786,7 @@ async function fetchLmStudioModels() {
 }
 
 async function saveLmStudioSettings() {
-  const { localhost, host, port, model, saveButton } = lmStudioSettingsElements();
+  const { localhost, host, port, model, thinkingEffort, saveButton } = lmStudioSettingsElements();
   const connectionMode = localhost?.checked ? 'localhost' : 'lan';
   setLmStudioSettingsStatus('保存中です。');
   if (saveButton) saveButton.disabled = true;
@@ -786,7 +798,8 @@ async function saveLmStudioSettings() {
         connection_mode: connectionMode,
         host: host?.value,
         port: Number(port?.value || 1234),
-        model: model?.value
+        model: model?.value,
+        thinking_effort: lmStudioThinkingEffortFromSelectValue(thinkingEffort?.value ?? 'none')
       })
     });
     const text = await response.text();

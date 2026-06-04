@@ -1,6 +1,8 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
+import { normalizeLmStudioConfig, normalizeLmStudioThinkingEffort } from '../llm/lmStudioClient.mjs';
+
 function statusError(message, statusCode, { errorCode = null } = {}) {
   const error = new Error(message);
   error.statusCode = statusCode;
@@ -34,9 +36,23 @@ function normalizeLmStudioSettingsShape(config = {}) {
     reflection_model: config.reflection_model ?? '',
     timeout_ms: config.timeout_ms ?? null,
     stream: config.stream ?? false,
+    thinking_effort: normalizeLmStudioThinkingEffort(config.thinking_effort),
     provider: config.provider ?? 'lmstudio',
     mock_provider_enabled: config.mock_provider_enabled ?? false
   };
+}
+
+function hasOwnProperty(object, key) {
+  return Object.prototype.hasOwnProperty.call(object, key);
+}
+
+function validateLmStudioThinkingEffortUpdate(body = {}) {
+  if (!hasOwnProperty(body, 'thinking_effort')) return undefined;
+  if (body.thinking_effort === null) return null;
+  if (body.thinking_effort === 'low' || body.thinking_effort === 'medium' || body.thinking_effort === 'high') {
+    return body.thinking_effort;
+  }
+  throw new Error('thinking_effort must be null, low, medium, or high');
 }
 
 function validateLmStudioSettingsUpdate(body = {}) {
@@ -48,11 +64,13 @@ function validateLmStudioSettingsUpdate(body = {}) {
   if (connectionMode === 'lan' && !host) throw new Error('host is required for lan connection mode');
   const model = String(body.model ?? '').trim();
   if (!model) throw new Error('model is required');
+  const thinkingEffort = validateLmStudioThinkingEffortUpdate(body);
   return {
     connectionMode,
     host,
     port,
     model,
+    thinkingEffort,
     baseUrl: `http://${host}:${port}/v1`
   };
 }
@@ -109,7 +127,12 @@ async function fetchLmStudioModelCatalog(body = {}) {
 }
 
 export async function ensureLmStudioConfigLoaded(context, { allowMissing = false } = {}) {
-  if (context.lmStudioConfig && typeof context.lmStudioConfig === 'object') return context.lmStudioConfig;
+  if (context.lmStudioConfig && typeof context.lmStudioConfig === 'object') {
+    const normalizedConfig = normalizeLmStudioConfig(context.lmStudioConfig);
+    for (const key of Object.keys(context.lmStudioConfig)) delete context.lmStudioConfig[key];
+    Object.assign(context.lmStudioConfig, normalizedConfig);
+    return context.lmStudioConfig;
+  }
   if (!context.lmStudioConfigPath) {
     if (allowMissing) return null;
     throw lmStudioConfigRequiredError();
@@ -123,7 +146,7 @@ export async function ensureLmStudioConfigLoaded(context, { allowMissing = false
     if (error instanceof SyntaxError) throw lmStudioConfigRequiredError('LM Studioの設定ファイルが壊れています。設定画面で接続先とモデルを保存し直してください。');
     throw error;
   }
-  context.lmStudioConfig = loadedConfig;
+  context.lmStudioConfig = normalizeLmStudioConfig(loadedConfig);
   return context.lmStudioConfig;
 }
 
@@ -177,7 +200,10 @@ export async function handleLmStudioSettingsApi({ req, res, url, context, sendJs
         provider: currentConfig.provider ?? 'lmstudio',
         base_url: update.baseUrl,
         chat_model: update.model,
-        reflection_model: update.model
+        reflection_model: update.model,
+        thinking_effort: update.thinkingEffort === undefined
+          ? normalizeLmStudioThinkingEffort(currentConfig.thinking_effort)
+          : update.thinkingEffort
       };
       await persistLmStudioConfig(context, nextConfig);
       sendJson(res, normalizeLmStudioSettingsShape(context.lmStudioConfig));

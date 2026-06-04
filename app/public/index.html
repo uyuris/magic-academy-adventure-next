@@ -188,6 +188,16 @@
                     <option value="">モデル一覧を取得してください</option>
                   </select>
                 </label>
+                <label class="character-description-editor settings-field settings-model-field">
+                  シンキングエフォート
+                  <select id="lmstudio-thinking-effort">
+                    <option value="none">None</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </label>
+                <p class="settings-model-status">None を選ぶと、LM Studio へのリクエストでシンキングを無効化します。</p>
                 <p id="lmstudio-model-status" class="settings-model-status" aria-live="polite">現在モデルを読み込みます。</p>
               </div>
               <div class="dialog-action-row settings-action-row">

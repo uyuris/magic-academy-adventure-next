@@ -168,7 +168,7 @@ async function waitFor(assertion, { timeoutMs = 1500, intervalMs = 25 } = {}) {
 
 test('server conversation endpoint uses LM Studio for assistant response and finalizes memory, skill, and work-record updates separately on ordinary conversation end', async (t) => {
   const lm = await withLmStudioStub(t);
-  const { root, base } = await withRuntimeServer(t, { base_url: lm.baseUrl, chat_model: 'chat-model', reflection_model: 'reflection-model', timeout_ms: 5000, stream: false });
+  const { root, base } = await withRuntimeServer(t, { base_url: lm.baseUrl, chat_model: 'chat-model', reflection_model: 'reflection-model', timeout_ms: 5000, stream: false, thinking_effort: 'medium' });
 
   const response = await fetch(`${base}/api/conversation`, {
     method: 'POST',
@@ -185,6 +185,7 @@ test('server conversation endpoint uses LM Studio for assistant response and fin
   assert.equal(lm.requests[0].response_format.json_schema.name, 'character_emotion_choice');
   assert.equal(lm.requests[1].model, 'chat-model');
   assert.match(lm.requests[2].messages[0].content, /会話を継続したいと思うか/);
+  assert.deepEqual(lm.requests.map((request) => request.reasoning), Array.from({ length: lm.requests.length }, () => 'medium'));
 
   const endResponse = await fetch(`${base}/api/conversation/end`, {
     method: 'POST',
@@ -271,6 +272,7 @@ test('server conversation endpoint uses LM Studio for assistant response and fin
   assert.match(destinationStageRequest.messages[0].content, /今度行く、来週行くなど、将来その場所へ一緒に行く予定について具体的に合意して会話が終わった場合も、向かう場所への合意が成立したものとして扱う/);
   assert.match(destinationStageRequest.messages[0].content, /返答は対応表にあるlocation_idを1つだけ返す/);
   assert.match(destinationStageRequest.messages[0].content, /移動可能な移動先の名称とlocation_idの対応表/);
+  assert.deepEqual(lm.requests.map((request) => request.reasoning), Array.from({ length: lm.requests.length }, () => 'medium'));
 });
 
 function parseSse(text) {
@@ -283,7 +285,7 @@ function parseSse(text) {
 
 test('server streaming conversation endpoint relays immediate assistant deltas before continuation judgment on ordinary conversation end', async (t) => {
   const lm = await withLmStudioStub(t);
-  const { root, base } = await withRuntimeServer(t, { base_url: lm.baseUrl, chat_model: 'chat-model', reflection_model: 'reflection-model', timeout_ms: 5000, stream: true });
+  const { root, base } = await withRuntimeServer(t, { base_url: lm.baseUrl, chat_model: 'chat-model', reflection_model: 'reflection-model', timeout_ms: 5000, stream: true, thinking_effort: null });
 
   const response = await fetch(`${base}/api/conversation/stream`, {
     method: 'POST',
@@ -312,6 +314,7 @@ test('server streaming conversation endpoint relays immediate assistant deltas b
   assert.equal(lm.requests.length, 3, 'streaming chat turn should choose emotion, stream the immediate LM Studio chat reply to the browser, then judge continuation; work-record recall is skipped when no linked candidate exists');
   assert.equal(lm.requests[0].response_format.json_schema.name, 'character_emotion_choice');
   assert.equal(lm.requests[1].stream, true);
+  assert.equal(lm.requests[1].reasoning, 'off');
   assert.match(lm.requests[2].messages[0].content, /会話を継続したいと思うか/);
 
   const endResponse = await fetch(`${base}/api/conversation/end`, {
@@ -383,11 +386,12 @@ test('server streaming conversation endpoint relays immediate assistant deltas b
   assert.match(destinationStageRequest.messages[0].content, /今度行く、来週行くなど、将来その場所へ一緒に行く予定について具体的に合意して会話が終わった場合も、向かう場所への合意が成立したものとして扱う/);
   assert.match(destinationStageRequest.messages[0].content, /返答は対応表にあるlocation_idを1つだけ返す/);
   assert.match(destinationStageRequest.messages[0].content, /移動可能な移動先の名称とlocation_idの対応表/);
+  assert.deepEqual(lm.requests.map((request) => request.reasoning), Array.from({ length: lm.requests.length }, () => 'off'));
 });
 
 test('server streaming opening endpoint relays LM Studio assistant deltas before final result', async (t) => {
   const lm = await withLmStudioStub(t);
-  const { base } = await withRuntimeServer(t, { base_url: lm.baseUrl, chat_model: 'chat-model', reflection_model: 'reflection-model', timeout_ms: 5000, stream: true });
+  const { base } = await withRuntimeServer(t, { base_url: lm.baseUrl, chat_model: 'chat-model', reflection_model: 'reflection-model', timeout_ms: 5000, stream: true, thinking_effort: 'low' });
 
   const response = await fetch(`${base}/api/conversation/opening/stream`, {
     method: 'POST',
@@ -408,6 +412,7 @@ test('server streaming opening endpoint relays LM Studio assistant deltas before
   assert.equal(events[resultIndex].data.conversation.messages[0].content, 'LM Studio stream');
   assert.equal(lm.requests.length, 1, 'opening should only call LM Studio chat once and not run emotion/recall/prewarm');
   assert.equal(lm.requests[0].stream, true);
+  assert.equal(lm.requests[0].reasoning, 'low');
 });
 
 test('server streaming opening emits structured config-required SSE errors when LM Studio config is unavailable', async (t) => {

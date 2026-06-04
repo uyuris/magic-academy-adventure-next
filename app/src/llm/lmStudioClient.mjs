@@ -14,6 +14,16 @@ function timeoutSignal(timeoutMs) {
 
 const LMSTUDIO_CONFIG_REQUIRED_MESSAGE = 'LM Studioの設定が必要です。設定画面で接続先とモデルを保存してください。';
 const LMSTUDIO_CONNECTION_UNAVAILABLE_MESSAGE = 'LM Studioの接続が確認できません。LM Studioを起動し、設定画面で接続先とモデルを確認してください。';
+const allowedThinkingEfforts = new Set(['low', 'medium', 'high']);
+
+export function normalizeLmStudioThinkingEffort(value) {
+  if (value === null || value === undefined) return null;
+  return allowedThinkingEfforts.has(value) ? value : null;
+}
+
+function reasoningForLmStudioConfig(config = {}) {
+  return normalizeLmStudioThinkingEffort(config.thinking_effort) ?? 'off';
+}
 
 function lmStudioConfigRequiredError() {
   const error = new Error(LMSTUDIO_CONFIG_REQUIRED_MESSAGE);
@@ -222,6 +232,7 @@ async function postChatCompletion({ config, model, messages, stream = false, res
           model: modelId,
           messages,
           stream,
+          reasoning: reasoningForLmStudioConfig(config),
           ...(responseFormat ? { response_format: responseFormat } : {})
         })
       });
@@ -294,7 +305,8 @@ export function normalizeLmStudioConfig(config = {}) {
     stream: true,
     mock_provider_enabled: true,
     ...config,
-    stream: config.stream === undefined ? true : config.stream === true
+    stream: config.stream === undefined ? true : config.stream === true,
+    thinking_effort: normalizeLmStudioThinkingEffort(config.thinking_effort)
   };
 }
 
