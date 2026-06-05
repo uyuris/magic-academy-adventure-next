@@ -61,7 +61,7 @@
       "interaction": {
         "location_id": "magic_tool_workshop",
         "source_type": "event",
-        "opening_context": "約束していた通り、あなたは主人公と一緒に人工精霊を作ることになった"
+        "opening_context": "約束していた通り、あなたは主人公と一緒に人工精霊を作ることになった。最初に、どのような経緯でここに至ったかについて回想を入れる。"
       },
       "description": "成立済みかつ未完了なら、イベント画面から成立元の会話相手と魔道具工房でインタラクションを開始する。"
     },
@@ -77,7 +77,7 @@
       "interaction": {
         "location_id": "herbology_garden",
         "source_type": "event",
-        "opening_context": "約束していた通り、あなたは主人公と一緒に天然精霊を探しにいくことになった"
+        "opening_context": "約束していた通り、あなたは主人公と一緒に天然精霊を探しにいくことになった。最初に、どのような経緯でここに至ったかについて回想を入れる。"
       },
       "description": "成立済みかつ未完了なら、イベント画面から成立元の会話相手と薬草温室でインタラクションを開始する。"
     },
@@ -93,7 +93,7 @@
       "interaction": {
         "location_id": "crystal_cave_below_school",
         "source_type": "event",
-        "opening_context": "約束していた通り、あなたは主人公と一緒に魔物討伐に行くことになった"
+        "opening_context": "約束していた通り、あなたは主人公と一緒に魔物討伐に行くことになった。最初に、どのような経緯でここに至ったかについて回想を入れる。"
       },
       "description": "成立済みかつ未完了なら、イベント画面から成立元の会話相手と学院地下の水晶洞でインタラクションを開始する。"
     },
@@ -109,7 +109,7 @@
       "interaction": {
         "location_id": "astronomy_tower_observatory",
         "source_type": "event",
-        "opening_context": "約束していた通り、あなたは主人公と一緒に天体観測することになった"
+        "opening_context": "約束していた通り、あなたは主人公と一緒に天体観測することになった。最初に、どのような経緯でここに至ったかについて回想を入れる。"
       },
       "description": "成立済みかつ未完了なら、イベント画面から成立元の会話相手と天文塔の観測室でインタラクションを開始する。"
     },
@@ -125,7 +125,7 @@
       "interaction": {
         "location_id": "old_corridor",
         "source_type": "event",
-        "opening_context": "約束していた通り、あなたは主人公と一緒に肝試しに行くことになった"
+        "opening_context": "約束していた通り、あなたは主人公と一緒に肝試しに行くことになった。最初に、どのような経緯でここに至ったかについて回想を入れる。"
       },
       "description": "成立済みかつ未完了なら、イベント画面から成立元の会話相手と旧廊下でインタラクションを開始する。"
     },
@@ -141,7 +141,7 @@
       "interaction": {
         "location_id": "student_cafeteria_magic_lamps",
         "source_type": "event",
-        "opening_context": "約束していた通り、あなたは主人公と一緒に食事をすることになった"
+        "opening_context": "約束していた通り、あなたは主人公と一緒に食事をすることになった。最初に、どのような経緯でここに至ったかについて回想を入れる。"
       },
       "description": "成立済みかつ未完了なら、イベント画面から成立元の会話相手と学生食堂でインタラクションを開始する。"
     },
@@ -157,7 +157,7 @@
       "interaction": {
         "location_id": "underground_waterway",
         "source_type": "event",
-        "opening_context": "約束していた通り、あなたは主人公と一緒に地脈の様子を確認することになった"
+        "opening_context": "約束していた通り、あなたは主人公と一緒に地脈の様子を確認することになった。最初に、どのような経緯でここに至ったかについて回想を入れる。"
       },
       "description": "成立済みかつ未完了なら、イベント画面から成立元の会話相手と地下水路でインタラクションを開始する。"
     },
@@ -173,7 +173,7 @@
       "interaction": {
         "location_id": "snowy_inner_garden",
         "source_type": "event",
-        "opening_context": "雪の話をして間もなく雪が降り始め、あなたは主人公と雪の中庭で会話を始めた。"
+        "opening_context": "雪の話をして間もなく雪が降り始め、あなたは主人公と雪の中庭で会話を始めた。最初に、どのような経緯でここに至ったかについて回想を入れる。"
       },
       "description": "成立済みかつ未完了なら、イベント画面から成立元の会話相手と雪の中庭でインタラクションを開始する。"
     },
@@ -189,7 +189,7 @@
       "interaction": {
         "location_id": "rainy_cloister",
         "source_type": "event",
-        "opening_context": "雨の話をして間もなく雨が降り始め、あなたは主人公と雨の回廊で会話を始めた。"
+        "opening_context": "雨の話をして間もなく雨が降り始め、あなたは主人公と雨の回廊で会話を始めた。最初に、どのような経緯でここに至ったかについて回想を入れる。"
       },
       "description": "成立済みかつ未完了なら、イベント画面から成立元の会話相手と雨の回廊でインタラクションを開始する。"
     },
@@ -205,7 +205,7 @@
       "interaction": {
         "location_id": "mirror_hall",
         "source_type": "event",
-        "opening_context": "先ほどの会話で心の中を映す鏡の話を行ったが、不可思議な力により、あなたと主人公は鏡の間へといざなわれた。"
+        "opening_context": "先ほどの会話で心の中を映す鏡の話を行ったが、不可思議な力により、あなたと主人公は鏡の間へといざなわれた。最初に、どのような経緯でここに至ったかについて回想を入れる。"
       },
       "description": "成立済みかつ未完了なら、イベント画面から成立元の会話相手と鏡の間でインタラクションを開始する。"
     },
