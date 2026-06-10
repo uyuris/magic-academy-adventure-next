@@ -1,9 +1,11 @@
 import { buildCharacterPrompt } from '../llm/promptBuilder.mjs';
+import { resolveCharacterSpeechConstraints } from '../llm/characterSpeechConstraints.mjs';
 import { buildContinuityPromptContext, mergeWorkRecordsById } from '../llm/continuityPromptContext.mjs';
 import { getContinuityRecordStatus, pendingRecalledWorkRecordIds, resetContinuityRecords, selectRelevantWorkRecords, startInteractionSession } from '../llm/conversationPipeline.mjs';
 import { ensureSelectableCharacterStorage } from '../characterCatalog.mjs';
 import { loadWorldSettings } from '../worldSettings.mjs';
 import { createStorageApi } from '../storage.mjs';
+import { ensureLmStudioConfigLoaded } from './lmStudioSettingsApi.mjs';
 
 function storageFor(root) {
   return createStorageApi({ root });
@@ -112,6 +114,12 @@ export async function handleInteractionContinuityApi({ req, res, url, context, s
       workRecords: selectedWorkRecords,
       allWorkRecords: workRecords
     });
+    const requestedProvider = url.searchParams.get('provider') ?? '';
+    let characterSpeechConstraints = [];
+    if (requestedProvider !== 'mock') {
+      const lmStudioConfig = await ensureLmStudioConfigLoaded(context, { allowMissing: true });
+      characterSpeechConstraints = await resolveCharacterSpeechConstraints({ root, chatModel: lmStudioConfig?.chat_model });
+    }
     const prompt = buildCharacterPrompt({
       profile: character.profile,
       scene: {
@@ -129,6 +137,7 @@ export async function handleInteractionContinuityApi({ req, res, url, context, s
         ? enrichEventContextWithSourceWorkRecord(state.pending_interaction_context, workRecords)
         : null,
       currentConversation,
+      characterSpeechConstraints,
       playerInput
     });
     return sendJson(res, { character_id: characterId, prompt });

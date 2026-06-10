@@ -2,6 +2,7 @@ import http from 'node:http';
 import path from 'node:path';
 import { buildCharacterPrompt } from './llm/promptBuilder.mjs';
 import { editConversationUserMessage, finalizeConversation, getContinuityRecordStatus, pendingRecalledWorkRecordIds, resetContinuityRecords, runConversationOpening, runConversationTurn, selectRelevantWorkRecords, startInteractionSession } from './llm/conversationPipeline.mjs';
+import { resolveCharacterSpeechConstraints } from './llm/characterSpeechConstraints.mjs';
 import { createLmStudioProviders, loadLmStudioConfig } from './llm/lmStudioClient.mjs';
 import { listSelectableCharacters, ensureSelectableCharacterStorage, updateCharacterProfileText } from './characterCatalog.mjs';
 import { loadWorldSettings } from './worldSettings.mjs';
@@ -88,7 +89,11 @@ async function resolveRuntimeProviders({ requestedProvider, context, onChatDelta
     };
   }
   const config = await ensureLmStudioConversationConfig(context);
-  return createLmStudioProviders({ config, onChatDelta });
+  const characterSpeechConstraints = await resolveCharacterSpeechConstraints({
+    root: context.activeRoot ?? context.root,
+    chatModel: config.chat_model
+  });
+  return { ...createLmStudioProviders({ config, onChatDelta }), characterSpeechConstraints };
 }
 
 async function runConversationFinalization({ root, conversationId, characterId, providers, finalStateTransform = null }) {

@@ -286,3 +286,37 @@ test('buildCharacterPrompt does not include every old work record when none are 
   assert.match(prompt, /この場で参照する過去の記録:\n- なし/);
   assert.match(prompt, /リナ・クラウゼ: 会話はここから続けられる。/);
 });
+
+
+test('buildCharacterPrompt renders character speech constraints after world settings without leaking model metadata', () => {
+  const prompt = buildCharacterPrompt({
+    profile: { display_name: 'リナ・クラウゼ', school_year: '2年生', club: '薬草学研究会' },
+    scene: {
+      academy_name: '星灯魔法学院',
+      world_description: '学院には地脈と星明かりを使う授業がある。',
+      location_name: '天文塔'
+    },
+    characterSpeechConstraints: [
+      '「最高」という単語は禁忌である。なぜなら、それは陳腐な表現だからだ。',
+      '自らの肩書きは決して自分で名乗ってはいけない。'
+    ],
+    playerInput: '星図を見よう'
+  });
+
+  const worldIndex = prompt.indexOf('ワールド設定: 学院には地脈と星明かりを使う授業がある。');
+  const constraintsIndex = prompt.indexOf('キャラクター発話上の禁止事項:');
+  const stageIndex = prompt.indexOf('舞台: 天文塔');
+  assert.ok(worldIndex >= 0, 'world settings should remain present');
+  assert.ok(constraintsIndex > worldIndex, 'speech constraints should be placed after world settings');
+  assert.ok(stageIndex > constraintsIndex, 'speech constraints should be placed before the stage');
+  assert.match(prompt, /キャラクター発話上の禁止事項:\n- 「最高」という単語は禁忌である。/);
+  assert.match(prompt, /- 自らの肩書きは決して自分で名乗ってはいけない。/);
+  assert.doesNotMatch(prompt, /Gemma4|LLM固有|モデル固有|このモデル|モデルの癖|profile_id|match_models|chat_model|reflection_model|provider/);
+
+  const promptWithoutConstraints = buildCharacterPrompt({
+    profile: { display_name: 'リナ・クラウゼ', school_year: '2年生', club: '薬草学研究会' },
+    scene: { academy_name: '星灯魔法学院', world_description: '学院設定のみ。', location_name: '天文塔' },
+    playerInput: '星図を見よう'
+  });
+  assert.doesNotMatch(promptWithoutConstraints, /キャラクター発話上の禁止事項/);
+});

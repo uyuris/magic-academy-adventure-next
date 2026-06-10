@@ -142,3 +142,20 @@ test('loadWorldSettings merges partial desktop world overrides onto authored def
   assert.equal(settings.world_description_base, 'config side world settings');
   assert.equal(Array.isArray(settings.world_condition_texts), true);
 });
+
+
+test('authored world description keeps model speech constraints in prompt definitions instead of world settings', async () => {
+  const authoredSettings = await readJson(sourceProjectRoot, 'data/definitions/game_data/world/settings.json');
+  const promptDefinitions = await readJson(sourceProjectRoot, 'data/definitions/game_data/prompt/character_speech_constraints.json');
+
+  assert.doesNotMatch(authoredSettings.world_description, /「最高」|直前までの会話|自らの肩書き|センスオブワンダー|行動の主体/);
+  assert.equal(Array.isArray(authoredSettings.world_condition_texts), true);
+  assert.equal(authoredSettings.world_condition_texts.some((entry) => entry.id === 'knowledge.necromancy_discussed.world_text'), true);
+
+  const gemmaProfile = promptDefinitions.profiles?.find((profile) => profile.id === 'gemma4_31b');
+  assert.ok(gemmaProfile, 'Gemma4 31B speech-constraint profile should exist');
+  const constraintText = JSON.stringify(gemmaProfile.constraints ?? []);
+  assert.match(constraintText, /「最高」、「最悪」、「最低」、「完璧」、「正解」、「特等席」、「記録」、「あなたなら」、「贅沢」/);
+  assert.match(constraintText, /直前までの会話/);
+  assert.match(constraintText, /自らの肩書き/);
+});

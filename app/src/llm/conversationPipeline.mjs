@@ -656,6 +656,7 @@ export async function runConversationOpening({
   characterId = 'lina',
   now = new Date().toISOString(),
   chatProvider = defaultChatProvider,
+  characterSpeechConstraints = [],
   onAssistantComplete
 }) {
   if (!root) throw new Error('root is required');
@@ -680,6 +681,7 @@ export async function runConversationOpening({
     workRecords: context.selectedWorkRecords,
     currentConversation: [],
     eventContext: context.eventContext,
+    characterSpeechConstraints,
     playerInput: null,
     openingTurn: true
   });
@@ -726,7 +728,8 @@ export async function editConversationUserMessage({
   workRecordRecallProvider = defaultWorkRecordRecallProvider,
   promptPrewarmProvider = defaultPromptPrewarmProvider,
   conversationContinuationProvider = defaultConversationContinuationProvider,
-  conversationCutoffProvider = defaultConversationCutoffProvider
+  conversationCutoffProvider = defaultConversationCutoffProvider,
+  characterSpeechConstraints = []
 }) {
   if (!root) throw new Error('root is required');
   const normalizedIndex = Math.trunc(Number(messageIndex));
@@ -764,7 +767,8 @@ export async function editConversationUserMessage({
     workRecordRecallProvider,
     promptPrewarmProvider,
     conversationContinuationProvider,
-    conversationCutoffProvider
+    conversationCutoffProvider,
+    characterSpeechConstraints
   });
   return {
     ...result,
@@ -785,6 +789,7 @@ export async function runConversationTurn({
   promptPrewarmProvider = defaultPromptPrewarmProvider,
   conversationContinuationProvider = defaultConversationContinuationProvider,
   conversationCutoffProvider = defaultConversationCutoffProvider,
+  characterSpeechConstraints = [],
   onEmotion,
   onAssistantComplete
 }) {
@@ -836,6 +841,7 @@ export async function runConversationTurn({
     skills: skillsFile.skills ?? [],
     workRecords: continuityPromptContext.workRecordsForPrompt,
     currentConversation,
+    characterSpeechConstraints,
     eventContext: state.current_interaction_character_id === characterId
       ? enrichEventContextWithSourceWorkRecord(state.pending_interaction_context ?? null, allWorkRecords)
       : null,

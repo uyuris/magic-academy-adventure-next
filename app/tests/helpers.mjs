@@ -44,7 +44,8 @@ async function seedLegacyGameDataDefinitions(root) {
     'locations.json',
     'shop_catalog.json',
     'stage_flags.json',
-    'world/settings.json'
+    'world/settings.json',
+    'prompt/character_speech_constraints.json'
   ];
   for (const relativePath of definitionFiles) {
     const source = path.join(definitionsRoot, relativePath);

@@ -144,7 +144,7 @@ async function resolveLegacyReadPath(paths, relativePath) {
   if (rest == null) return resolveWithinBase(paths.projectRoot, relativePath);
   if (!rest) return resolveWithinBase(paths.projectRoot, 'game_data');
 
-  if (rest === 'locations.json' || rest === 'event_flags.json' || rest === 'stage_flags.json' || rest === 'shop_catalog.json') {
+  if (rest === 'locations.json' || rest === 'event_flags.json' || rest === 'stage_flags.json' || rest === 'shop_catalog.json' || rest.startsWith(`prompt${path.sep}`)) {
     return resolveWithinBase(paths.definitionsRoot, rest);
   }
   if (rest === path.join('world', 'settings.json')) {
@@ -181,7 +181,7 @@ function resolveLegacyWritePath(paths, relativePath) {
   if (rest == null) return resolveWithinBase(paths.projectRoot, relativePath);
   if (!rest) return resolveWithinBase(paths.projectRoot, 'game_data');
 
-  if (rest === 'locations.json' || rest === 'event_flags.json' || rest === 'stage_flags.json' || rest === 'shop_catalog.json') {
+  if (rest === 'locations.json' || rest === 'event_flags.json' || rest === 'stage_flags.json' || rest === 'shop_catalog.json' || rest.startsWith(`prompt${path.sep}`)) {
     return resolveWithinBase(paths.definitionsRoot, rest);
   }
   if (rest === path.join('world', 'settings.json')) {

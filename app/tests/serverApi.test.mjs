@@ -961,6 +961,33 @@ test('server world settings expose editable player name and zero-default player 
   assert.match(preview.prompt, /学力: 89\/100/);
 });
 
+test('prompt preview resolves character speech constraints from LM Studio chat_model without leaking model metadata', async (t) => {
+  const { base } = await withServer(t, {
+    lmStudioConfig: {
+      base_url: 'http://127.0.0.1:9/v1',
+      chat_model: 'google/gemma-4-31b',
+      reflection_model: 'reflection-model',
+      stream: false,
+      timeout_ms: 5000,
+      thinking_effort: null
+    }
+  });
+
+  const preview = await jsonFetch(`${base}/api/prompt-preview?character_id=lina&player_input=${encodeURIComponent('星図を見たい')}`);
+  const worldIndex = preview.prompt.indexOf('ワールド設定:');
+  const constraintsIndex = preview.prompt.indexOf('キャラクター発話上の禁止事項:');
+  const stageIndex = preview.prompt.indexOf('舞台:');
+
+  assert.ok(worldIndex >= 0, 'prompt preview should include world settings');
+  assert.ok(constraintsIndex > worldIndex, 'prompt preview should place speech constraints after world settings');
+  assert.ok(stageIndex > constraintsIndex, 'prompt preview should place speech constraints before the stage');
+  assert.match(preview.prompt, /「最高」、「最悪」、「最低」、「完璧」、「正解」、「特等席」、「記録」、「あなたなら」、「贅沢」/);
+  assert.doesNotMatch(preview.prompt, /Gemma4|LLM固有|モデル固有|このモデル|モデルの癖|profile_id|match_models|chat_model|reflection_model|provider/);
+
+  const mockPreview = await jsonFetch(`${base}/api/prompt-preview?provider=mock&character_id=lina&player_input=${encodeURIComponent('星図を見たい')}`);
+  assert.doesNotMatch(mockPreview.prompt, /キャラクター発話上の禁止事項:/);
+});
+
 test('training catalog covers every generated card image with weekday affinities and one drawback each', () => {
   const expectedTrainingIds = [
     'artifact_appraisal',

@@ -166,6 +166,29 @@ async function waitFor(assertion, { timeoutMs = 1500, intervalMs = 25 } = {}) {
   throw lastError;
 }
 
+test('server conversation endpoint resolves character speech constraints from chat_model without leaking model metadata into prompts', async (t) => {
+  const lm = await withLmStudioStub(t);
+  const { base } = await withRuntimeServer(t, { base_url: lm.baseUrl, chat_model: 'google/gemma-4-31b', reflection_model: 'reflection-model', timeout_ms: 5000, stream: false, thinking_effort: null });
+
+  const response = await fetch(`${base}/api/conversation`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ id: 'conv_lmstudio_constraints_test', character_id: 'lina', player_input: '星図の話をしよう' })
+  });
+  assert.equal(response.status, 200);
+  await response.json();
+
+  assert.equal(lm.requests.length, 3, 'conversation turn should choose emotion, call chat, then judge continuation');
+  assert.equal(lm.requests[0].model, 'reflection-model', 'emotion choice may use reflection_model but must receive constraints chosen from chat_model');
+  assert.equal(lm.requests[1].model, 'google/gemma-4-31b');
+  const characterPrompts = lm.requests.slice(0, 3).map((request) => request.messages?.[0]?.content ?? '');
+  for (const prompt of characterPrompts) {
+    assert.match(prompt, /キャラクター発話上の禁止事項:/);
+    assert.match(prompt, /「最高」、「最悪」、「最低」、「完璧」、「正解」、「特等席」、「記録」、「あなたなら」、「贅沢」/);
+    assert.doesNotMatch(prompt, /Gemma4|LLM固有|モデル固有|このモデル|モデルの癖|profile_id|match_models|chat_model|reflection_model|provider/);
+  }
+});
+
 test('server conversation endpoint uses LM Studio for assistant response and finalizes memory, skill, and work-record updates separately on ordinary conversation end', async (t) => {
   const lm = await withLmStudioStub(t);
   const { root, base } = await withRuntimeServer(t, { base_url: lm.baseUrl, chat_model: 'chat-model', reflection_model: 'reflection-model', timeout_ms: 5000, stream: false, thinking_effort: 'medium' });

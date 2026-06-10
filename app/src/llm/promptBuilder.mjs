@@ -79,7 +79,20 @@ function renderEventContext(eventContext) {
   return lines.length ? lines.join('\n') : null;
 }
 
-export function buildCharacterPromptPrefix({ profile, scene, memories = [], skills = [], workRecords = [], currentConversation = [], eventContext = null }) {
+function normalizeSpeechConstraintText(value) {
+  return String(value ?? '').trim().replace(/^-+\s*/, '');
+}
+
+function renderCharacterSpeechConstraints(characterSpeechConstraints = []) {
+  if (!Array.isArray(characterSpeechConstraints)) return null;
+  const lines = characterSpeechConstraints
+    .map(normalizeSpeechConstraintText)
+    .filter(Boolean);
+  if (lines.length === 0) return null;
+  return `キャラクター発話上の禁止事項:\n${lines.map((line) => `- ${line}`).join('\n')}`;
+}
+
+export function buildCharacterPromptPrefix({ profile, scene, memories = [], skills = [], workRecords = [], currentConversation = [], eventContext = null, characterSpeechConstraints = [] }) {
   if (!profile?.display_name) throw new Error('profile.display_name is required');
   if (!scene?.academy_name || !scene?.location_name) throw new Error('scene academy and location are required');
   const schoolYear = profile.school_year ?? '生徒';
@@ -94,9 +107,11 @@ export function buildCharacterPromptPrefix({ profile, scene, memories = [], skil
   const characterParameterText = renderParametersForPrompt(profile.parameters);
   const playerParameterText = renderParametersForPrompt(scene.player_parameters);
   const parameterAttitudeGuidance = renderParameterAttitudeGuidance(profile);
+  const characterSpeechConstraintsText = renderCharacterSpeechConstraints(characterSpeechConstraints);
 
   const sceneLines = [
     scene.world_description ? `ワールド設定: ${scene.world_description}` : null,
+    characterSpeechConstraintsText,
     `舞台: ${scene.location_name}`,
     scene.visible_situation ? `見えている状況: ${scene.visible_situation}` : null
   ].filter(Boolean);
@@ -133,10 +148,10 @@ export function buildCharacterPromptPrefix({ profile, scene, memories = [], skil
   ].filter((line) => line !== null).join('\n');
 }
 
-export function buildCharacterPrompt({ profile, scene, memories = [], skills = [], workRecords = [], currentConversation = [], eventContext = null, playerInput, openingTurn = false, turnType = null, candidateWorkRecordIds = [], generatedAssistantText = '' }) {
+export function buildCharacterPrompt({ profile, scene, memories = [], skills = [], workRecords = [], currentConversation = [], eventContext = null, characterSpeechConstraints = [], playerInput, openingTurn = false, turnType = null, candidateWorkRecordIds = [], generatedAssistantText = '' }) {
   const isOpeningTurn = openingTurn || turnType === 'opening';
   const isBetweenTurns = turnType === 'work_record_recall' || turnType === 'prefix_prewarm';
-  const promptPrefix = buildCharacterPromptPrefix({ profile, scene, memories, skills, workRecords, currentConversation, eventContext });
+  const promptPrefix = buildCharacterPromptPrefix({ profile, scene, memories, skills, workRecords, currentConversation, eventContext, characterSpeechConstraints });
   const candidateIdsText = candidateWorkRecordIds.length ? candidateWorkRecordIds.join(', ') : '';
   const candidateIdsJsonExample = candidateWorkRecordIds[0] ? `"${candidateWorkRecordIds[0]}"` : '';
 
