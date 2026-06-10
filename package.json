@@ -38,6 +38,15 @@
       "electron/**/*",
       "package.json"
     ],
+    "extraResources": [
+      {
+        "from": "build/legal/third-party-notices",
+        "to": "third-party-notices",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
     "extraMetadata": {
       "main": "electron/main.mjs"
     },
